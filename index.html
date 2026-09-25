@@ -427,7 +427,9 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       zTokenSaved:"Đã lưu token, bot: {0}",zAppUrl:"Link app gắn vào cuối tin nhắn",zSaveUrl:"Lưu link",zGroupOn:"Nhóm Zalo chung: <b>đã kết nối</b>",zGroupOff:"Nhóm Zalo chung: chưa kết nối (không bắt buộc)",
       zGroupHint:"Muốn cả nhóm nhận tin: thêm bot vào nhóm Zalo của tổ, trong nhóm nhắn “@tên-bot TT NHOM”, rồi bấm “Kiểm tra tin nhắn mới”.",zClearGroup:"Bỏ nhóm",zPoll:"Kiểm tra tin nhắn mới",zPolled:"Đã kết nối thêm {0} người/nhóm",
       zTrigOn:"Nhắc sắp trễ / quá hạn tự động: <b>đang bật</b> (15 phút/lần).",zTrigOff:"Nhắc sắp trễ / quá hạn tự động: <b>chưa bật</b>. Trong Apps Script chọn hàm <b>batNhacZalo</b> → Chạy (một lần).",
-      zErr:"Lỗi gửi gần nhất: {0}",zRemove:"Gỡ Zalo Bot",zLinkedCount:"{0}/{1} tài khoản đã kết nối Zalo",zRaw:"Phản hồi gần nhất từ Zalo (dùng khi cần kiểm tra lỗi)",zShort:"Zalo"},
+      zErr:"Lỗi gửi gần nhất: {0}",zRemove:"Gỡ Zalo Bot",zLinkedCount:"{0}/{1} tài khoản đã kết nối Zalo",zRaw:"Phản hồi gần nhất từ Zalo (dùng khi cần kiểm tra lỗi)",
+      zWhOn:"Nhận tin: <b>Webhook</b> (Zalo tự đẩy tin về) ✓",zWhOff:"Nhận tin: hỏi định kỳ. Nên bật Webhook để kết nối ổn định hơn.",zWhBtn:"Bật Webhook (khuyên dùng)",zWhOffBtn:"Tắt Webhook",zWhDone:"Đã bật Webhook. Mọi người nhắn lại mã cho bot để kết nối.",
+      zLinkLbl:"Deeplink của bot (lấy ở Zalo Bot Creator → Thông tin → Deeplink)",zLinkSave:"Lưu Deeplink",zOpenBot:"Mở chat với bot",zStep1b:"Bấm nút dưới để mở chat với <b>{0}</b>.",zShort:"Zalo"},
     en:{appName:"Re-cut Log",soundOn:"Sound alert for new jobs / near deadline",newReq:"New re-cut request",close:"Close",
       style:"Style",order:"Production order",typeToSearch:"Type to search…",reason:"Reason",typeReason:"Type a reason…",partsToCut:"Parts to re-cut",addLine:"+ Add part",
       deadline:"Due",note:"Note",notePh:"Fabric roll, shade…",accName:"Name",roles:"Roles",
@@ -482,7 +484,9 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       zTokenSaved:"Token saved, bot: {0}",zAppUrl:"App link added to messages",zSaveUrl:"Save link",zGroupOn:"Shared Zalo group: <b>connected</b>",zGroupOff:"Shared Zalo group: not connected (optional)",
       zGroupHint:"To notify a whole group: add the bot to the team's Zalo group, send “@bot-name TT NHOM” in the group, then tap “Check new messages”.",zClearGroup:"Remove group",zPoll:"Check new messages",zPolled:"{0} new person/group connected",
       zTrigOn:"Automatic due-soon / overdue alerts: <b>on</b> (every 15 min).",zTrigOff:"Automatic due-soon / overdue alerts: <b>off</b>. In Apps Script choose function <b>batNhacZalo</b> → Run (once).",
-      zErr:"Last send error: {0}",zRemove:"Remove Zalo Bot",zLinkedCount:"{0}/{1} accounts connected to Zalo",zRaw:"Latest Zalo response (for troubleshooting)",zShort:"Zalo"}
+      zErr:"Last send error: {0}",zRemove:"Remove Zalo Bot",zLinkedCount:"{0}/{1} accounts connected to Zalo",zRaw:"Latest Zalo response (for troubleshooting)",
+      zWhOn:"Receiving: <b>Webhook</b> (Zalo pushes messages) ✓",zWhOff:"Receiving: polling. Turn on Webhook for a more reliable connection.",zWhBtn:"Turn on Webhook (recommended)",zWhOffBtn:"Turn off Webhook",zWhDone:"Webhook on. Ask everyone to send their code to the bot again.",
+      zLinkLbl:"Bot deeplink (Zalo Bot Creator → Info → Deeplink)",zLinkSave:"Save deeplink",zOpenBot:"Open chat with bot",zStep1b:"Tap the button below to open the chat with <b>{0}</b>.",zShort:"Zalo"}
   };
   // Lỗi từ máy chủ (tiếng Việt) → tiếng Anh
   const SERVER_EN={"Mã PIN không đúng.":"Wrong PIN.","Thiếu mã hàng.":"Style is missing.","Cần ít nhất 1 chi tiết có số lượng.":"At least 1 part with a quantity is required.",
@@ -1006,7 +1010,8 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     if(!zInfo.configured) return '<div class="fhint">'+t(isAdmin()?"zOffAdmin":"zOff")+'</div>';
     if(zInfo.linked) return '<div class="zok">'+t("zLinked")+'</div><div class="actions"><button type="button" class="btn" data-act="zTest">'+t("zTest")+'</button><span class="spacer"></span><button type="button" class="btn ghost" data-act="zUnlink">'+t("zUnlink")+'</button></div>';
     const code="TT "+zInfo.code;
-    return '<ol class="zsteps"><li>'+t("zStep1",esc(zInfo.botName||t("zBotGeneric")))+'</li><li>'+t("zStep2")+'<div class="zcode"><span id="zCodeTxt">'+code+'</span><button type="button" class="btn ghost" data-act="zCopy">'+t("copy")+'</button></div></li><li>'+t("zStep3")+'</li></ol>'+
+    const bn=esc(zInfo.botName||t("zBotGeneric"));
+    return '<ol class="zsteps"><li>'+(zInfo.link?t("zStep1b",bn)+'<div style="margin-top:6px"><a class="btn" href="'+esc(zInfo.link)+'" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">'+t("zOpenBot")+'</a></div>':t("zStep1",bn))+'</li><li>'+t("zStep2")+'<div class="zcode"><span id="zCodeTxt">'+code+'</span><button type="button" class="btn ghost" data-act="zCopy">'+t("copy")+'</button></div></li><li>'+t("zStep3")+'</li></ol>'+
       '<div class="actions"><button type="button" class="btn primary" data-act="zCheck"'+(zBusy?' disabled':'')+'>'+(zBusy?t("zChecking"):t("zCheck"))+'</button></div>';
   }
   function zAdminHtml(){
@@ -1019,6 +1024,8 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       (z.configured?
         '<div class="fld"><label for="z-app">'+t("zAppUrl")+'</label><input id="z-app" value="'+esc(appUrl)+'" autocomplete="off"></div><div><button type="button" class="btn" data-act="zSaveUrl">'+t("zSaveUrl")+'</button></div>'+
         '<div class="fhint">'+t("zLinkedCount",nz,na)+'</div>'+
+        '<div>'+t(z.webhook?"zWhOn":"zWhOff")+'</div><div><button type="button" class="btn'+(z.webhook?'':' primary')+'" data-act="'+(z.webhook?'zWhOff':'zWhOn')+'">'+t(z.webhook?"zWhOffBtn":"zWhBtn")+'</button></div>'+
+        '<div class="fld"><label for="z-link">'+t("zLinkLbl")+'</label><input id="z-link" value="'+esc(z.link||"")+'" autocomplete="off" placeholder="https://bot.zaloplatforms.com/bots/…"></div><div><button type="button" class="btn" data-act="zSaveLink">'+t("zLinkSave")+'</button></div>'+
         '<div>'+t(z.group?"zGroupOn":"zGroupOff")+(z.group?' <button type="button" class="linkbtn" data-act="zClearGroup">'+t("zClearGroup")+'</button>':'')+'</div><div class="fhint">'+t("zGroupHint")+'</div>'+
         '<div><button type="button" class="btn" data-act="zPoll">'+t("zPoll")+'</button></div>'+
         '<div class="fhint">'+t(z.hasTrigger?"zTrigOn":"zTrigOff")+'</div>'+
@@ -1035,6 +1042,9 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     if(a==="zSaveUrl") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{appUrl:$("#z-app").value.trim()}); toast(t("saved")); $("#zAdmin").innerHTML=zAdminHtml(); });
     if(a==="zClearGroup") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{clearGroup:true}); $("#zAdmin").innerHTML=zAdminHtml(); });
     if(a==="zRemove") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{remove:true}); $("#zAdmin").innerHTML=zAdminHtml(); });
+    if(a==="zWhOn") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{webhookUrl:API_URL}); toast(t("zWhDone")); $("#zAdmin").innerHTML=zAdminHtml(); });
+    if(a==="zWhOff") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{webhookOff:true}); $("#zAdmin").innerHTML=zAdminHtml(); });
+    if(a==="zSaveLink") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{deeplink:$("#z-link").value.trim()}); toast(t("saved")); $("#zAdmin").innerHTML=zAdminHtml(); });
     if(a==="zPoll") return busyBtn(async()=>{ zInfo=await api("apiZaloCheck",token); toast(t("zPolled",zInfo.newLinks||0)); poll(); $("#zAdmin").innerHTML=zAdminHtml(); });
   }
 
