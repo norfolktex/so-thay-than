@@ -259,6 +259,13 @@ body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
 .loginlang{display:flex;justify-content:flex-end}
 .card.stat{padding:8px;gap:0}
 .ciw{display:grid;gap:4px}
+.zbox{margin-top:10px}
+.zsteps{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14px}
+.zcode{display:flex;align-items:center;gap:8px;margin-top:6px}
+.zcode span{font-family:var(--f-num);font-size:26px;font-weight:700;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:2px 12px}
+.zok{color:var(--ok);font-weight:600}
+.zrole{background:var(--ok-soft)!important;color:var(--ok)!important;border-color:transparent!important}
+#zAdmin{gap:10px}
 .ciw .qbtn{justify-self:end;font-size:13px;padding:4px 8px;margin-top:-2px}
 .ci.short{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
 .ci.short input{accent-color:var(--warn)}
@@ -409,7 +416,16 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       lateAlert:"Quá hạn: {0}",warnAlert:"Còn ≤ {0} phút: {1}",cutDoneToast:"Đã cắt xong {0} – bàn giao cho {1}",handDone:"Hoàn thành {0} – đã bàn giao",canceled:"Đã hủy phiếu {0}",dueSaved:"Đã lưu hạn mới",
       today:"hôm nay",yesterday:"hôm qua",tomorrow:"ngày mai",hShort:"g",mShort:"p",
       editQty:"Sửa SL",madeQty:"Số lượng làm được",shortReason:"Lý do thiếu",shortPh:"VD: không đủ vải",save:"Lưu",made:"Làm được {0}/{1}",shortBy:"thiếu {0}",
-      qtyHint:"Bấm ô vuông nếu làm đủ. Nếu thiếu (VD không đủ vải), bấm “Sửa SL” để nhập số lượng thực tế.",shortTotal:" (thiếu {0})",qtySaved:"Đã lưu số lượng"},
+      qtyHint:"Bấm ô vuông nếu làm đủ. Nếu thiếu (VD không đủ vải), bấm “Sửa SL” để nhập số lượng thực tế.",shortTotal:" (thiếu {0})",qtySaved:"Đã lưu số lượng",
+      zTitle:"Nhận thông báo qua Zalo",zLoading:"Đang kiểm tra Zalo…",zOff:"Thông báo Zalo chưa được bật.",zOffAdmin:"Chưa cài Zalo Bot. Vào tab Quản trị để cài.",
+      zStep1:"Mở Zalo, tìm <b>{0}</b> và bấm Nhắn tin.",zBotGeneric:"Zalo Bot của công ty",zStep2:"Nhắn cho bot đúng nội dung:",zStep3:"Quay lại đây, bấm “Kiểm tra kết nối”.",
+      zCheck:"Kiểm tra kết nối",zChecking:"Đang kiểm tra…",zNotYet:"Chưa thấy tin nhắn. Nhắn đúng mã cho bot rồi thử lại sau vài giây.",zLinked:"✓ Zalo đã kết nối. Bạn sẽ nhận thông báo trên Zalo.",
+      zTest:"Gửi tin thử",zTestOk:"Đã gửi tin thử, kiểm tra Zalo.",zUnlink:"Ngắt kết nối",copy:"Sao chép",copied:"Đã sao chép",
+      zAdminT:"Thông báo Zalo Bot",zStatusOn:"Đang bật · bot: <b>{0}</b>",zStatusOff:"Chưa cài.",zToken:"Bot Token",zTokenPh:"Dán token Zalo gửi cho bạn",zSaveToken:"Kiểm tra & lưu token",
+      zTokenSaved:"Đã lưu token, bot: {0}",zAppUrl:"Link app gắn vào cuối tin nhắn",zSaveUrl:"Lưu link",zGroupOn:"Nhóm Zalo chung: <b>đã kết nối</b>",zGroupOff:"Nhóm Zalo chung: chưa kết nối (không bắt buộc)",
+      zGroupHint:"Muốn cả nhóm nhận tin: thêm bot vào nhóm Zalo của tổ, trong nhóm nhắn “@tên-bot TT NHOM”, rồi bấm “Kiểm tra tin nhắn mới”.",zClearGroup:"Bỏ nhóm",zPoll:"Kiểm tra tin nhắn mới",zPolled:"Đã kết nối thêm {0} người/nhóm",
+      zTrigOn:"Nhắc sắp trễ / quá hạn tự động: <b>đang bật</b> (15 phút/lần).",zTrigOff:"Nhắc sắp trễ / quá hạn tự động: <b>chưa bật</b>. Trong Apps Script chọn hàm <b>batNhacZalo</b> → Chạy (một lần).",
+      zErr:"Lỗi gửi gần nhất: {0}",zRemove:"Gỡ Zalo Bot",zLinkedCount:"{0}/{1} tài khoản đã kết nối Zalo",zShort:"Zalo"},
     en:{appName:"Re-cut Log",soundOn:"Sound alert for new jobs / near deadline",newReq:"New re-cut request",close:"Close",
       style:"Style",order:"Production order",typeToSearch:"Type to search…",reason:"Reason",typeReason:"Type a reason…",partsToCut:"Parts to re-cut",addLine:"+ Add part",
       deadline:"Due",note:"Note",notePh:"Fabric roll, shade…",accName:"Name",roles:"Roles",
@@ -455,7 +471,16 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       lateAlert:"Overdue: {0}",warnAlert:"≤ {0} min left: {1}",cutDoneToast:"{0} cut – hand over to {1}",handDone:"{0} completed – handed over",canceled:"Ticket {0} cancelled",dueSaved:"Due time saved",
       today:"today",yesterday:"yesterday",tomorrow:"tomorrow",hShort:"h",mShort:"m",
       editQty:"Edit qty",madeQty:"Quantity made",shortReason:"Shortage reason",shortPh:"e.g. not enough fabric",save:"Save",made:"Made {0}/{1}",shortBy:"short {0}",
-      qtyHint:"Tick the box if fully done. If short (e.g. not enough fabric), tap “Edit qty” to enter the actual quantity.",shortTotal:" (short {0})",qtySaved:"Quantity saved"}
+      qtyHint:"Tick the box if fully done. If short (e.g. not enough fabric), tap “Edit qty” to enter the actual quantity.",shortTotal:" (short {0})",qtySaved:"Quantity saved",
+      zTitle:"Get notifications on Zalo",zLoading:"Checking Zalo…",zOff:"Zalo notifications are not enabled.",zOffAdmin:"Zalo Bot is not set up. Go to the Admin tab.",
+      zStep1:"Open Zalo, find <b>{0}</b> and tap Message.",zBotGeneric:"the company Zalo Bot",zStep2:"Send the bot exactly:",zStep3:"Come back here and tap “Check connection”.",
+      zCheck:"Check connection",zChecking:"Checking…",zNotYet:"No message found yet. Send the exact code to the bot and try again in a few seconds.",zLinked:"✓ Zalo connected. You will get notifications on Zalo.",
+      zTest:"Send test",zTestOk:"Test sent, check Zalo.",zUnlink:"Disconnect",copy:"Copy",copied:"Copied",
+      zAdminT:"Zalo Bot notifications",zStatusOn:"On · bot: <b>{0}</b>",zStatusOff:"Not set up.",zToken:"Bot Token",zTokenPh:"Paste the token Zalo sent you",zSaveToken:"Check & save token",
+      zTokenSaved:"Token saved, bot: {0}",zAppUrl:"App link added to messages",zSaveUrl:"Save link",zGroupOn:"Shared Zalo group: <b>connected</b>",zGroupOff:"Shared Zalo group: not connected (optional)",
+      zGroupHint:"To notify a whole group: add the bot to the team's Zalo group, send “@bot-name TT NHOM” in the group, then tap “Check new messages”.",zClearGroup:"Remove group",zPoll:"Check new messages",zPolled:"{0} new person/group connected",
+      zTrigOn:"Automatic due-soon / overdue alerts: <b>on</b> (every 15 min).",zTrigOff:"Automatic due-soon / overdue alerts: <b>off</b>. In Apps Script choose function <b>batNhacZalo</b> → Run (once).",
+      zErr:"Last send error: {0}",zRemove:"Remove Zalo Bot",zLinkedCount:"{0}/{1} accounts connected to Zalo",zShort:"Zalo"}
   };
   // Lỗi từ máy chủ (tiếng Việt) → tiếng Anh
   const SERVER_EN={"Mã PIN không đúng.":"Wrong PIN.","Thiếu mã hàng.":"Style is missing.","Cần ít nhất 1 chi tiết có số lượng.":"At least 1 part with a quantity is required.",
@@ -486,6 +511,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   let loaded=false, needSetup=false, tab="tong", filter="run", q="", lsMonth="";
   let openId=null, editingId=null, editAcctId=null;
   const logCache={}, monthCache={};
+  let zInfo=null, zBusy=false;
 
   // ================= TIỆN ÍCH =================
   const pad=n=>String(n).padStart(2,"0");
@@ -550,7 +576,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     const wasMe=!!me;
     ver=d.ver; me=d.me; users=d.users||[]; notif=d.notif||[]; people=users.filter(u=>u.active!==false); lenh=d.lenh||[]; months=d.months||[]; sheetUrl=d.sheetUrl||"";
     combosCache=null; loaded=true;
-    if(!wasMe){ tab=has("xl")?"viec":"tong"; filter="run"; seeded=false; notifSeeded=false; loadCatalog(); }
+    if(!wasMe){ tab=has("xl")?"viec":"tong"; filter="run"; seeded=false; notifSeeded=false; zInfo=null; loadCatalog(); }
     $("#login").hidden=true;
     for(const k in monthCache) delete monthCache[k];
     if(openId) delete logCache[openId];
@@ -654,12 +680,13 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   function vQt(){
     const act_=users.filter(u=>u.active!==false), off=users.filter(u=>u.active===false);
     const roleChips=u=>(u.roles||[]).filter(r=>t("role_"+r)).map(r=>'<span class="role">'+t("role_"+r)+'</span>').join("");
-    const row=u=>'<div class="acc-row'+(u.active===false?" off":"")+'"><div style="flex:1;min-width:0"><div class="nm">'+esc(u.ten)+(u.id===me.id?' <span class="sub">'+t("you")+'</span>':'')+'</div><div class="roles">'+roleChips(u)+(u.active===false?'<span class="role">'+t("locked")+'</span>':'')+'</div></div><button type="button" class="btn" data-act="editAcct" data-id="'+u.id+'">'+t("edit")+'</button></div>';
+    const row=u=>'<div class="acc-row'+(u.active===false?" off":"")+'"><div style="flex:1;min-width:0"><div class="nm">'+esc(u.ten)+(u.id===me.id?' <span class="sub">'+t("you")+'</span>':'')+'</div><div class="roles">'+roleChips(u)+(u.active===false?'<span class="role">'+t("locked")+'</span>':'')+(u.zalo?'<span class="role zrole">'+t("zShort")+' ✓</span>':'')+'</div></div><button type="button" class="btn" data-act="editAcct" data-id="'+u.id+'">'+t("edit")+'</button></div>';
     const nL=uniqVals(cat.map(c=>c.lsx)).length;
     return '<div class="actions" style="margin-top:4px"><button type="button" class="btn primary" data-act="newAcct">'+t("addAcc")+'</button>'+(sheetUrl?'<a class="btn" href="'+esc(sheetUrl)+'" target="_blank" rel="noopener" style="text-decoration:none">'+t("openSheet")+'</a>':'')+'</div>'+
       '<div class="sec-label">'+t("accounts",act_.length)+'</div><div class="list">'+act_.map(row).join("")+'</div>'+
       (off.length?'<div class="sec-label">'+t("locked")+'</div><div class="list">'+off.map(row).join("")+'</div>':'')+
       '<div class="sec-label">'+t("catTitle")+'</div><div class="box"><div class="fhint">'+t("catInfo",nL,cat.length)+'</div><div><button type="button" class="btn" data-act="reloadCat">'+t("reloadCat")+'</button></div></div>'+
+      '<div class="sec-label">'+t("zAdminT")+'</div><div class="box" id="zAdmin">'+zAdminHtml()+'</div>'+
       '<div class="banner" style="margin-top:14px">'+t("loginNote")+'</div>'; }
 
   function card(l,now){
@@ -688,6 +715,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     const b=e.target.closest("[data-act]"); if(!b)return; const a=b.dataset.act;
     if(a==="newAcct") openAcct(null);
     if(a==="editAcct") openAcct(users.find(u=>u.id===b.dataset.id));
+    if(a&&a.indexOf("z")===0) return zAction(a,b);
     if(a==="reloadCat"){ b.disabled=true; await loadCatalog(); toast(t("catReloaded",cat.length)); render(); }
   });
   $("#main").addEventListener("input",e=>{ if(e.target.id==="q"){ q=e.target.value; render(); } });
@@ -968,6 +996,45 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     api("apiInit",null).then(r=>{ if(!me){ people=r.people||[]; needSetup=!!r.needSetup; renderLogin(); } }).catch(()=>{}); }
   $("#meBtn").addEventListener("click",()=>{ const tk=token; api("apiLogout",tk).catch(()=>{}); localLogout(); });
 
+  // ================= ZALO =================
+  async function loadZ(){ try{ zInfo=await api("apiZaloMe",token); }catch(e){ zInfo={configured:false,err:msgOf(e)}; } renderZUser(); const za=$("#zAdmin"); if(za) za.innerHTML=zAdminHtml(); }
+  function renderZUser(){ const box=$("#zUser"); if(!box) return; box.innerHTML='<div class="box zbox"><h3>'+t("zTitle")+'</h3>'+zUserHtml()+'</div>'; }
+  function zUserHtml(){
+    if(!zInfo) return '<div class="fhint">'+t("zLoading")+'</div>';
+    if(!zInfo.configured) return '<div class="fhint">'+t(isAdmin()?"zOffAdmin":"zOff")+'</div>';
+    if(zInfo.linked) return '<div class="zok">'+t("zLinked")+'</div><div class="actions"><button type="button" class="btn" data-act="zTest">'+t("zTest")+'</button><span class="spacer"></span><button type="button" class="btn ghost" data-act="zUnlink">'+t("zUnlink")+'</button></div>';
+    const code="TT "+zInfo.code;
+    return '<ol class="zsteps"><li>'+t("zStep1",esc(zInfo.botName||t("zBotGeneric")))+'</li><li>'+t("zStep2")+'<div class="zcode"><span id="zCodeTxt">'+code+'</span><button type="button" class="btn ghost" data-act="zCopy">'+t("copy")+'</button></div></li><li>'+t("zStep3")+'</li></ol>'+
+      '<div class="actions"><button type="button" class="btn primary" data-act="zCheck"'+(zBusy?' disabled':'')+'>'+(zBusy?t("zChecking"):t("zCheck"))+'</button></div>';
+  }
+  function zAdminHtml(){
+    if(!zInfo){ loadZ(); return '<div class="fhint">'+t("zLoading")+'</div>'; }
+    const z=zInfo, nz=users.filter(u=>u.active!==false&&u.zalo).length, na=users.filter(u=>u.active!==false).length;
+    const appUrl=z.appUrl||(location.origin+location.pathname);
+    return '<div>'+(z.configured?t("zStatusOn",esc(z.botName||"?")):t("zStatusOff"))+'</div>'+
+      '<div class="fld"><label for="z-token">'+t("zToken")+'</label><input id="z-token" type="password" autocomplete="off" placeholder="'+esc(t("zTokenPh"))+'"></div>'+
+      '<div class="actions"><button type="button" class="btn primary" data-act="zSaveToken">'+t("zSaveToken")+'</button>'+(z.configured?'<span class="spacer"></span><button type="button" class="btn ghost" data-act="zRemove">'+t("zRemove")+'</button>':'')+'</div>'+
+      (z.configured?
+        '<div class="fld"><label for="z-app">'+t("zAppUrl")+'</label><input id="z-app" value="'+esc(appUrl)+'" autocomplete="off"></div><div><button type="button" class="btn" data-act="zSaveUrl">'+t("zSaveUrl")+'</button></div>'+
+        '<div class="fhint">'+t("zLinkedCount",nz,na)+'</div>'+
+        '<div>'+t(z.group?"zGroupOn":"zGroupOff")+(z.group?' <button type="button" class="linkbtn" data-act="zClearGroup">'+t("zClearGroup")+'</button>':'')+'</div><div class="fhint">'+t("zGroupHint")+'</div>'+
+        '<div><button type="button" class="btn" data-act="zPoll">'+t("zPoll")+'</button></div>'+
+        '<div class="fhint">'+t(z.hasTrigger?"zTrigOn":"zTrigOff")+'</div>'+
+        (z.err?'<div class="fhint err">'+t("zErr",esc(z.err))+'</div>':''):'');
+  }
+  async function zAction(a,b){
+    const busyBtn=async(fn)=>{ b.disabled=true; try{ await fn(); }catch(e){ fail(e); } finally{ b.disabled=false; } };
+    if(a==="zCopy"){ const tx=$("#zCodeTxt").textContent; try{ await navigator.clipboard.writeText(tx); toast(t("copied")); }catch(e){ const r=document.createRange(); r.selectNodeContents($("#zCodeTxt")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); } return; }
+    if(a==="zCheck"){ zBusy=true; renderZUser(); try{ zInfo=await api("apiZaloCheck",token); if(!zInfo.linked) toast(t("zNotYet"),true); else { toast(t("zLinked")); poll(); } }catch(e){ fail(e); } zBusy=false; renderZUser(); return; }
+    if(a==="zTest") return busyBtn(async()=>{ await api("apiZaloTest",token); toast(t("zTestOk")); });
+    if(a==="zUnlink") return busyBtn(async()=>{ zInfo=await api("apiZaloUnlink",token); renderZUser(); });
+    if(a==="zSaveToken") return busyBtn(async()=>{ const v=$("#z-token").value.trim(); if(!v) return; zInfo=await api("apiZaloConfig",token,{zaloToken:v,appUrl:location.origin+location.pathname}); toast(t("zTokenSaved",zInfo.botName||"?")); $("#zAdmin").innerHTML=zAdminHtml(); });
+    if(a==="zSaveUrl") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{appUrl:$("#z-app").value.trim()}); toast(t("saved")); $("#zAdmin").innerHTML=zAdminHtml(); });
+    if(a==="zClearGroup") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{clearGroup:true}); $("#zAdmin").innerHTML=zAdminHtml(); });
+    if(a==="zRemove") return busyBtn(async()=>{ zInfo=await api("apiZaloConfig",token,{remove:true}); $("#zAdmin").innerHTML=zAdminHtml(); });
+    if(a==="zPoll") return busyBtn(async()=>{ zInfo=await api("apiZaloCheck",token); toast(t("zPolled",zInfo.newLinks||0)); poll(); $("#zAdmin").innerHTML=zAdminHtml(); });
+  }
+
   // ================= THÔNG BÁO =================
   const seenAt=()=>{ const v=Number(lsGet("tt_seen_"+(me&&me.id))); return v||Date.now()-12*3600e3; };
   function forMe(n){ if(!me||n.by===me.id) return false; const l=lenh.find(x=>x.id===n.id), mine=!!l&&l.ycBy===me.id;
@@ -998,11 +1065,13 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     $("#bell").dataset.since=since;
     $("#bellBody").innerHTML='<div class="hd"><h2>'+t("notifT")+'</h2><button type="button" class="btn ghost" data-act="closeBell">'+t("close")+'</button></div>'+
       (list.length?'<div class="nlist">'+list.map(n=>'<button type="button" class="nitem'+(n.t>since?" new":"")+'" data-nid="'+esc(n.id)+'"><span class="nt">'+notifText(n)+'</span><time>'+fmtDT(n.t)+'</time></button>').join("")+'</div>'
-        :'<div class="empty">'+t("notifEmpty")+'</div>');
+        :'<div class="empty">'+t("notifEmpty")+'</div>')+'<div id="zUser"></div>';
+    renderZUser(); if(!zInfo) loadZ();
     $("#bell").hidden=false; lsSet("tt_seen_"+me.id,String(Date.now())); render(); }
   function closeBell(){ $("#bell").hidden=true; delete $("#bell").dataset.since; }
   $("#bellBtn").addEventListener("click",()=>{ unlockAudio(); delete $("#bell").dataset.since; openBell(); });
   $("#bell").addEventListener("click",e=>{ if(e.target.id==="bell"||e.target.closest('[data-act="closeBell"]')){ closeBell(); return; }
+    const za=e.target.closest("[data-act^='z']"); if(za){ zAction(za.dataset.act,za); return; }
     const b=e.target.closest("[data-nid]"); if(b){ closeBell(); if(findL(b.dataset.nid)) openDetail(b.dataset.nid); else toast(t("notifOld")); } });
 
   document.addEventListener("keydown",e=>{ if(e.key!=="Escape")return;
