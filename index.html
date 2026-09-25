@@ -2,12 +2,12 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Sổ thay thân</title>
 <meta name="theme-color" content="#2C4BA0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" media="print" onload="this.media='all'">
 <style>
 :root{
   --ground:#EEF1F0; --surface:#FFFFFF; --surface-2:#F6F8F7;
@@ -258,6 +258,35 @@ body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
 .langbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;height:34px;min-width:40px;padding:0 10px;font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--ink-2)}
 .loginlang{display:flex;justify-content:flex-end}
 .card.stat{padding:8px;gap:0}
+.danger-t{color:var(--late)}
+.delwrap:empty{display:none}
+.acc-row{flex-wrap:wrap}
+/* ===== Vừa khít chiều ngang màn hình điện thoại: không cuộn ngang, chỉ cuộn lên xuống ===== */
+html{overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overflow-x:clip;max-width:100vw;touch-action:pan-y}
+header.top>*,.wrap>*,.grid>*,.line>*,.sheet>*,.list>*,.row1>*{min-width:0}
+.tabs{flex-wrap:wrap;overflow:visible;margin-inline:0;padding-inline:0;row-gap:4px}
+.brand{min-width:0}
+.brand h1{flex:1 1 auto}
+.brand .r{flex:0 0 auto;min-width:0;gap:6px}
+.me .nm{max-width:110px}
+.ma,.sub,.who,dd,.nt,.tx,.note,.fhint,.banner,.code,h2,.duet,.zraw pre{overflow-wrap:anywhere;word-break:break-word}
+.sheet{max-width:100vw;overflow-x:hidden}
+.opts,.chips,.actions,.meta{min-width:0}
+img,svg,video{max-width:100%}
+/* iOS tự phóng to khi chữ trong ô nhập < 16px → giữ 16px để màn hình không bị kéo lệch */
+input,select,textarea{font-size:16px!important}
+@media (max-width:380px){
+  .clock{display:none}
+  .me .nm{display:none}
+  .me{padding:4px}
+  .brand h1{font-size:16px}
+  .tally{gap:4px}
+  .tally .n{font-size:21px}
+  .tally .l{font-size:10.5px}
+  .due .t{font-size:20px}
+  .line{padding:8px;gap:6px}
+}
 .ciw{display:grid;gap:4px}
 .zbox{margin-top:10px}
 .zsteps{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14px}
@@ -348,6 +377,7 @@ body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
     <div class="fld"><span class="flabel"><span data-t="roles">Vai trò</span> <span class="req">*</span></span>
       <label class="cbx"><input type="checkbox" id="r-yc"> <span data-t="roleYcLong">Người yêu cầu (chuyền, QC)</span></label>
       <label class="cbx"><input type="checkbox" id="r-xl"> <span data-t="roleXlLong">Tổ thay thân (cắt, tick, bàn giao)</span></label>
+      <label class="cbx"><input type="checkbox" id="r-td"> <span data-t="roleTdLong">Theo dõi (chỉ xem tiến độ, không thao tác)</span></label>
       <label class="cbx"><input type="checkbox" id="r-admin"> <span data-t="roleAdminLong">Quản trị (tài khoản, danh mục, đổi hạn)</span></label>
     </div>
     <div class="fld"><label for="a-pin" id="a-pinLbl"></label><input id="a-pin" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6"></div>
@@ -379,7 +409,8 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       roleYcLong:"Người yêu cầu (chuyền, QC)",roleXlLong:"Tổ thay thân (cắt, tick, bàn giao)",roleAdminLong:"Quản trị (tài khoản, danh mục, đổi hạn)",
       lockAcc:"Khóa tài khoản (không đăng nhập được nữa)",saveAcc:"Lưu tài khoản",
       st_cho_cat:"Chờ cắt",st_da_duyet:"Chờ cắt",st_dang:"Đang cắt",st_cho_ban_giao:"Cắt xong · chờ bàn giao",st_xong:"Hoàn thành",st_tu_choi:"Bị từ chối",st_huy:"Đã hủy",
-      role_yc:"Yêu cầu",role_xl:"Tổ thay thân",role_admin:"Quản trị",role_duyet:"",
+      role_yc:"Yêu cầu",role_xl:"Tổ thay thân",role_td:"Theo dõi",role_admin:"Quản trị",role_duyet:"",roleTdLong:"Theo dõi (chỉ xem tiến độ, không thao tác)",
+      delAcc:"Xóa",delAsk:"Xóa hẳn tài khoản “{0}”? Lịch sử các phiếu cũ vẫn giữ tên người này.",delYes:"Xóa tài khoản",delDone:"Đã xóa tài khoản {0}",a_batdau:"bắt đầu cắt",
       tab_tong:"Tổng quan",tab_viec:"Việc cần làm",tab_gui:"Tôi đã gửi",tab_ls:"Lịch sử",tab_qt:"Quản trị",
       t_late:"Quá hạn",t_run:"Đang thay",t_bg:"Chờ bàn giao",t_done:"Xong hôm nay",
       searchAll:"Tìm số phiếu, mã hàng, LSX, người…",searchWork:"Tìm trong việc cần làm…",searchMine:"Tìm trong phiếu tôi đã gửi…",searchLs:"Tìm mã hàng, LSX…",
@@ -428,6 +459,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       zGroupHint:"Muốn cả nhóm nhận tin: thêm bot vào nhóm Zalo của tổ, trong nhóm nhắn “@tên-bot TT NHOM”, rồi bấm “Kiểm tra tin nhắn mới”.",zClearGroup:"Bỏ nhóm",zPoll:"Kiểm tra tin nhắn mới",zPolled:"Đã kết nối thêm {0} người/nhóm",
       zTrigOn:"Nhắc sắp trễ / quá hạn tự động: <b>đang bật</b> (15 phút/lần).",zTrigOff:"Nhắc sắp trễ / quá hạn tự động: <b>chưa bật</b>. Trong Apps Script chọn hàm <b>batNhacZalo</b> → Chạy (một lần).",
       zErr:"Lỗi gửi gần nhất: {0}",zRemove:"Gỡ Zalo Bot",zLinkedCount:"{0}/{1} tài khoản đã kết nối Zalo",zRaw:"Phản hồi gần nhất từ Zalo (dùng khi cần kiểm tra lỗi)",
+      zGrpOnly:"Thông báo Zalo được gửi vào <b>nhóm Zalo chung</b> của tổ (yêu cầu mới, cắt xong, bàn giao, hủy, đổi hạn, sắp đến hạn, quá hạn). Hãy tham gia nhóm để theo dõi.",zGrpNone:"Nhóm Zalo chung chưa được kết nối.",
       zWhOn:"Nhận tin: <b>Webhook</b> (Zalo tự đẩy tin về) ✓",zWhOff:"Nhận tin: hỏi định kỳ. Nên bật Webhook để kết nối ổn định hơn.",zWhBtn:"Bật Webhook (khuyên dùng)",zWhOffBtn:"Tắt Webhook",zWhDone:"Đã bật Webhook. Mọi người nhắn lại mã cho bot để kết nối.",
       zLinkLbl:"Deeplink của bot (lấy ở Zalo Bot Creator → Thông tin → Deeplink)",zLinkSave:"Lưu Deeplink",zOpenBot:"Mở chat với bot",zStep1b:"Bấm nút dưới để mở chat với <b>{0}</b>.",zShort:"Zalo"},
     en:{appName:"Re-cut Log",soundOn:"Sound alert for new jobs / near deadline",newReq:"New re-cut request",close:"Close",
@@ -436,7 +468,8 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       roleYcLong:"Requester (sewing line, QC)",roleXlLong:"Re-cut team (cut, tick, hand over)",roleAdminLong:"Admin (accounts, catalog, deadlines)",
       lockAcc:"Lock account (can no longer sign in)",saveAcc:"Save account",
       st_cho_cat:"Waiting to cut",st_da_duyet:"Waiting to cut",st_dang:"Cutting",st_cho_ban_giao:"Cut · awaiting handover",st_xong:"Completed",st_tu_choi:"Rejected",st_huy:"Cancelled",
-      role_yc:"Requester",role_xl:"Re-cut team",role_admin:"Admin",role_duyet:"",
+      role_yc:"Requester",role_xl:"Re-cut team",role_td:"Watcher",role_admin:"Admin",role_duyet:"",roleTdLong:"Watcher (view progress only, no actions)",
+      delAcc:"Delete",delAsk:"Permanently delete account “{0}”? Old tickets keep this person's name.",delYes:"Delete account",delDone:"Account {0} deleted",a_batdau:"started cutting",
       tab_tong:"Overview",tab_viec:"My jobs",tab_gui:"My requests",tab_ls:"History",tab_qt:"Admin",
       t_late:"Overdue",t_run:"In progress",t_bg:"Awaiting handover",t_done:"Done today",
       searchAll:"Search ticket, style, order, person…",searchWork:"Search my jobs…",searchMine:"Search my requests…",searchLs:"Search style, order…",
@@ -485,6 +518,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       zGroupHint:"To notify a whole group: add the bot to the team's Zalo group, send “@bot-name TT NHOM” in the group, then tap “Check new messages”.",zClearGroup:"Remove group",zPoll:"Check new messages",zPolled:"{0} new person/group connected",
       zTrigOn:"Automatic due-soon / overdue alerts: <b>on</b> (every 15 min).",zTrigOff:"Automatic due-soon / overdue alerts: <b>off</b>. In Apps Script choose function <b>batNhacZalo</b> → Run (once).",
       zErr:"Last send error: {0}",zRemove:"Remove Zalo Bot",zLinkedCount:"{0}/{1} accounts connected to Zalo",zRaw:"Latest Zalo response (for troubleshooting)",
+      zGrpOnly:"Zalo notifications go to the team's <b>shared Zalo group</b> (new requests, cut done, handover, cancel, due change, due soon, overdue). Join the group to follow along.",zGrpNone:"The shared Zalo group is not connected yet.",
       zWhOn:"Receiving: <b>Webhook</b> (Zalo pushes messages) ✓",zWhOff:"Receiving: polling. Turn on Webhook for a more reliable connection.",zWhBtn:"Turn on Webhook (recommended)",zWhOffBtn:"Turn off Webhook",zWhDone:"Webhook on. Ask everyone to send their code to the bot again.",
       zLinkLbl:"Bot deeplink (Zalo Bot Creator → Info → Deeplink)",zLinkSave:"Save deeplink",zOpenBot:"Open chat with bot",zStep1b:"Tap the button below to open the chat with <b>{0}</b>.",zShort:"Zalo"}
   };
@@ -578,16 +612,17 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   function setBusy(d){ busy+=d; $("#conn").textContent=busy>0?t("saving"):(ver?t("synced",fmtHM(Date.now())):""); }
   async function act(fn,...args){ setBusy(1); try{ const r=await api(fn,token,...args); if(r&&r.lenh) applyData(r); return r; } finally{ setBusy(-1); } }
 
-  function applyData(d){
+  function applyData(d,fromCache){
     const wasMe=!!me;
+    if(!fromCache){ try{ localStorage.setItem("tt_data",JSON.stringify(d)); }catch(e){} }
     ver=d.ver; me=d.me; users=d.users||[]; notif=d.notif||[]; people=users.filter(u=>u.active!==false); lenh=d.lenh||[]; months=d.months||[]; sheetUrl=d.sheetUrl||"";
     combosCache=null; loaded=true;
-    if(!wasMe){ tab=has("xl")?"viec":"tong"; filter="run"; seeded=false; notifSeeded=false; zInfo=null; loadCatalog(); }
+    if(!wasMe){ tab=has("xl")?"viec":"tong"; filter="run"; seeded=false; notifSeeded=false; zInfo=null; if(!catFetched) loadCatalog(); }
     $("#login").hidden=true;
     for(const k in monthCache) delete monthCache[k];
     if(openId) delete logCache[openId];
     render(); checkAlerts();
-    $("#conn").textContent=t("synced",fmtHM(Date.now()));
+    $("#conn").textContent=fromCache?t("connecting"):t("synced",fmtHM(Date.now()));
   }
   async function poll(){ if(!token||!me||busy)return;
     try{ const v=await api("apiVer"); if(v!==ver){ applyData(await api("apiData",token)); } else { render(); checkAlerts(); }
@@ -686,7 +721,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   function vQt(){
     const act_=users.filter(u=>u.active!==false), off=users.filter(u=>u.active===false);
     const roleChips=u=>(u.roles||[]).filter(r=>t("role_"+r)).map(r=>'<span class="role">'+t("role_"+r)+'</span>').join("");
-    const row=u=>'<div class="acc-row'+(u.active===false?" off":"")+'"><div style="flex:1;min-width:0"><div class="nm">'+esc(u.ten)+(u.id===me.id?' <span class="sub">'+t("you")+'</span>':'')+'</div><div class="roles">'+roleChips(u)+(u.active===false?'<span class="role">'+t("locked")+'</span>':'')+(u.zalo?'<span class="role zrole">'+t("zShort")+' ✓</span>':'')+'</div></div><button type="button" class="btn" data-act="editAcct" data-id="'+u.id+'">'+t("edit")+'</button></div>';
+    const row=u=>'<div class="acc-row'+(u.active===false?" off":"")+'"><div style="flex:1;min-width:0"><div class="nm">'+esc(u.ten)+(u.id===me.id?' <span class="sub">'+t("you")+'</span>':'')+'</div><div class="roles">'+roleChips(u)+(u.active===false?'<span class="role">'+t("locked")+'</span>':'')+(u.zalo?'<span class="role zrole">'+t("zShort")+' ✓</span>':'')+'</div></div><button type="button" class="btn" data-act="editAcct" data-id="'+u.id+'">'+t("edit")+'</button>'+(u.id!==me.id?'<button type="button" class="btn ghost danger-t" data-act="delAsk" data-id="'+u.id+'">'+t("delAcc")+'</button>':'')+'</div><div class="delwrap" id="dw-'+u.id+'"></div>';
     const nL=uniqVals(cat.map(c=>c.lsx)).length;
     return '<div class="actions" style="margin-top:4px"><button type="button" class="btn primary" data-act="newAcct">'+t("addAcc")+'</button>'+(sheetUrl?'<a class="btn" href="'+esc(sheetUrl)+'" target="_blank" rel="noopener" style="text-decoration:none">'+t("openSheet")+'</a>':'')+'</div>'+
       '<div class="sec-label">'+t("accounts",act_.length)+'</div><div class="list">'+act_.map(row).join("")+'</div>'+
@@ -721,6 +756,9 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     const b=e.target.closest("[data-act]"); if(!b)return; const a=b.dataset.act;
     if(a==="newAcct") openAcct(null);
     if(a==="editAcct") openAcct(users.find(u=>u.id===b.dataset.id));
+    if(a==="delAsk"){ const u=users.find(x=>x.id===b.dataset.id); $("#dw-"+u.id).innerHTML='<div class="confirm"><span>'+t("delAsk",esc(u.ten))+'</span><div class="actions"><button type="button" class="btn" data-act="delNo" data-id="'+u.id+'">'+t("no")+'</button><button type="button" class="btn danger" data-act="delYes" data-id="'+u.id+'">'+t("delYes")+'</button></div></div>'; return; }
+    if(a==="delNo"){ $("#dw-"+b.dataset.id).innerHTML=""; return; }
+    if(a==="delYes"){ const u=users.find(x=>x.id===b.dataset.id); b.disabled=true; try{ await act("apiDeleteUser",u.id); toast(t("delDone",u.ten)); }catch(err){ fail(err); b.disabled=false; } return; }
     if(a&&a.indexOf("z")===0) return zAction(a,b);
     if(a==="reloadCat"){ b.disabled=true; await loadCatalog(); toast(t("catReloaded",cat.length)); render(); }
   });
@@ -732,7 +770,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   function openDetail(id){ openId=id; unlockAudio(); $("#detail").hidden=false; renderDetail(); }
   async function loadLog(id){ if(logCache[id]) return; logCache[id]="loading";
     try{ logCache[id]=await api("apiLog",token,id); }catch(e){ logCache[id]=[]; } if(openId===id) renderDetail(); }
-  const ACT_BY_LABEL={"Tạo yêu cầu":"tao","Sửa yêu cầu":"sua","Duyệt":"duyet","Từ chối":"tuchoi","Nhận việc":"nhan","Đã thay":"tick","Bỏ tick":"botick","Hoàn thành toàn bộ":"xong","Hủy phiếu":"huy","Giao việc":"giao","Đổi hạn":"doihan","Đã cắt xong – chờ bàn giao":"catxong","Đã bàn giao cho người yêu cầu":"bangiao"};
+  const ACT_BY_LABEL={"Tạo yêu cầu":"tao","Sửa yêu cầu":"sua","Duyệt":"duyet","Từ chối":"tuchoi","Nhận việc":"nhan","Đã thay":"tick","Bỏ tick":"botick","Hoàn thành toàn bộ":"xong","Hủy phiếu":"huy","Giao việc":"giao","Đổi hạn":"doihan","Đã cắt xong – chờ bàn giao":"catxong","Đã bàn giao cho người yêu cầu":"bangiao","Bắt đầu cắt":"batdau"};
   function renderDetail(){
     const l=findL(openId); if(!l){ closeDetail(); return; }
     const now=Date.now(), s=stateOf(l,now), p=progress(l), its=itemsOf(l);
@@ -905,8 +943,13 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   // ================= DANH MỤC & CHỌN NHANH =================
   let cat=[], combosCache=null, linesSig="";
   const norm=s=>String(s??"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[đĐ]/g,"d").toLowerCase().replace(/\s+/g," ").trim();
-  async function loadCatalog(){ try{ const r=await api("apiCatalog",token); const rows=Array.isArray(r)?r:(r.rows||[]); lyDoList=r.lyDo||[]; ctList=r.chiTiet||[];
-    cat=rows.map(a=>({ma:a[0]||"",lsx:a[1]||"",mau:a[2]||"",size:a[3]||""})); combosCache=null; updateCatHint(); }catch(e){} }
+  let catFetched=false;
+  function setCatalog(r){ const rows=Array.isArray(r)?r:(r.rows||[]); lyDoList=r.lyDo||[]; ctList=r.chiTiet||[];
+    cat=rows.map(a=>({ma:a[0]||"",lsx:a[1]||"",mau:a[2]||"",size:a[3]||""})); combosCache=null; updateCatHint(); }
+  // Danh mục lưu sẵn trên máy → mở form là có ngay; tải bản mới ở nền
+  try{ const c=localStorage.getItem("tt_cat"); if(c) setCatalog(JSON.parse(c)); }catch(e){}
+  async function loadCatalog(){ if(!token) return; catFetched=true;
+    try{ const r=await api("apiCatalog",token); setCatalog(r); try{ localStorage.setItem("tt_cat",JSON.stringify(r)); }catch(e){} }catch(e){ catFetched=false; } }
   function getCombos(){ if(combosCache)return combosCache; const seen=new Set(),out=[];
     const push=o=>{ if(!o.ma&&!o.lsx)return; const k=[o.ma,o.lsx,o.mau,o.size].map(norm).join("|"); if(seen.has(k))return; seen.add(k); out.push(o); };
     cat.forEach(push); lenh.forEach(l=>itemsOf(l).forEach(i=>push({ma:l.ma||"",lsx:l.lsx||"",mau:i.mau||"",size:i.size||""})));
@@ -957,13 +1000,13 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
 
   // ================= TÀI KHOẢN =================
   function openAcct(u){ editAcctId=u?u.id:null; $("#acctTitle").textContent=u?t("editAccT"):t("addAccT");
-    $("#a-ten").value=u?u.ten:""; ["yc","xl","admin"].forEach(r=>$("#r-"+r).checked=u?(u.roles||[]).includes(r):r==="yc");
+    $("#a-ten").value=u?u.ten:""; ["yc","xl","td","admin"].forEach(r=>$("#r-"+r).checked=u?(u.roles||[]).includes(r):r==="yc");
     $("#a-pin").value=""; $("#a-pinLbl").innerHTML=u?esc(t("pinReset")):esc(t("pinNew"))+' <span class="req">*</span>';
     $("#a-offWrap").hidden=!u; $("#a-off").checked=u?u.active===false:false; $("#acctErr").hidden=true; $("#acct").hidden=false; }
   $("#acctClose").addEventListener("click",()=>$("#acct").hidden=true);
   $("#acct").addEventListener("click",e=>{ if(e.target.id==="acct") $("#acct").hidden=true; });
   $("#acctForm").addEventListener("submit",async e=>{ e.preventDefault();
-    const d={id:editAcctId,ten:$("#a-ten").value.trim(),roles:["yc","xl","admin"].filter(r=>$("#r-"+r).checked),pin:$("#a-pin").value.trim(),off:$("#a-off").checked};
+    const d={id:editAcctId,ten:$("#a-ten").value.trim(),roles:["yc","xl","td","admin"].filter(r=>$("#r-"+r).checked),pin:$("#a-pin").value.trim(),off:$("#a-off").checked};
     const btn=e.target.querySelector("button[type=submit]"); btn.disabled=true;
     try{ await act("apiSaveUser",d); $("#acct").hidden=true; toast(t("accSaved",d.ten)); }
     catch(err){ const m=msgOf(err); if(m==="AUTH") fail(err); else { $("#acctErr").textContent=m; $("#acctErr").hidden=false; } }
@@ -998,7 +1041,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       if(e.target.id==="pinForm"){ token=await api("apiLogin",loginSel,$("#lg-pin").value.trim()); lsSet("tt_tok",token);
         applyData(await api("apiData",token)); toast(t("hello",me.ten)); }
     }catch(err){ const el=$("#suErr")||$("#lgErr"); if(el){ el.textContent=msgOf(err); el.hidden=false; } const p=$("#lg-pin"); if(p) p.value=""; btn.disabled=false; } });
-  function localLogout(){ token=null; lsSet("tt_tok",null); me=null; loginSel=null; loginMsg=null; closeDetail(); closeForm(); $("#bell").hidden=true; render(); $("#login").hidden=false; renderLogin();
+  function localLogout(){ token=null; lsSet("tt_tok",null); lsSet("tt_data",null); me=null; loginSel=null; loginMsg=null; closeDetail(); closeForm(); $("#bell").hidden=true; render(); $("#login").hidden=false; renderLogin();
     api("apiInit",null).then(r=>{ if(!me){ people=r.people||[]; needSetup=!!r.needSetup; renderLogin(); } }).catch(()=>{}); }
   $("#meBtn").addEventListener("click",()=>{ const tk=token; api("apiLogout",tk).catch(()=>{}); localLogout(); });
 
@@ -1008,6 +1051,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   function zUserHtml(){
     if(!zInfo) return '<div class="fhint">'+t("zLoading")+'</div>';
     if(!zInfo.configured) return '<div class="fhint">'+t(isAdmin()?"zOffAdmin":"zOff")+'</div>';
+    if(zInfo.personal===false) return '<div class="fhint">'+t("zGrpOnly")+'</div>'+(zInfo.group?'':'<div class="fhint err">'+t(isAdmin()?"zGrpNone":"zGrpNone")+'</div>');
     if(zInfo.linked) return '<div class="zok">'+t("zLinked")+'</div><div class="actions"><button type="button" class="btn" data-act="zTest">'+t("zTest")+'</button><span class="spacer"></span><button type="button" class="btn ghost" data-act="zUnlink">'+t("zUnlink")+'</button></div>';
     const code="TT "+zInfo.code;
     const bn=esc(zInfo.botName||t("zBotGeneric"));
@@ -1023,7 +1067,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       '<div class="actions"><button type="button" class="btn primary" data-act="zSaveToken">'+t("zSaveToken")+'</button>'+(z.configured?'<span class="spacer"></span><button type="button" class="btn ghost" data-act="zRemove">'+t("zRemove")+'</button>':'')+'</div>'+
       (z.configured?
         '<div class="fld"><label for="z-app">'+t("zAppUrl")+'</label><input id="z-app" value="'+esc(appUrl)+'" autocomplete="off"></div><div><button type="button" class="btn" data-act="zSaveUrl">'+t("zSaveUrl")+'</button></div>'+
-        '<div class="fhint">'+t("zLinkedCount",nz,na)+'</div>'+
+        (z.personal===false?'':'<div class="fhint">'+t("zLinkedCount",nz,na)+'</div>')+
         '<div>'+t(z.webhook?"zWhOn":"zWhOff")+'</div><div><button type="button" class="btn'+(z.webhook?'':' primary')+'" data-act="'+(z.webhook?'zWhOff':'zWhOn')+'">'+t(z.webhook?"zWhOffBtn":"zWhBtn")+'</button></div>'+
         '<div class="fld"><label for="z-link">'+t("zLinkLbl")+'</label><input id="z-link" value="'+esc(z.link||"")+'" autocomplete="off" placeholder="https://bot.zaloplatforms.com/bots/…"></div><div><button type="button" class="btn" data-act="zSaveLink">'+t("zLinkSave")+'</button></div>'+
         '<div>'+t(z.group?"zGroupOn":"zGroupOff")+(z.group?' <button type="button" class="linkbtn" data-act="zClearGroup">'+t("zClearGroup")+'</button>':'')+'</div><div class="fhint">'+t("zGroupHint")+'</div>'+
@@ -1051,12 +1095,14 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   // ================= THÔNG BÁO =================
   const seenAt=()=>{ const v=Number(lsGet("tt_seen_"+(me&&me.id))); return v||Date.now()-12*3600e3; };
   function forMe(n){ if(!me||n.by===me.id) return false; const l=lenh.find(x=>x.id===n.id), mine=!!l&&l.ycBy===me.id;
+    if((me.roles||[]).includes("td")&&["tao","sua","batdau","catxong","bangiao","huy","doihan"].includes(n.a)) return true;
     switch(n.a){
       case "tao": case "sua": return has("xl");
       case "duyet": case "tuchoi": return mine;
       case "doihan": case "huy": return mine||has("xl");
       case "catxong": return mine;
       case "bangiao": return mine||has("xl");
+      case "batdau": return mine;
       default: return false; } }
   const myNotif=()=>notif.filter(forMe).sort((a,b)=>b.t-a.t);
   function notifText(n){ const l=lenh.find(x=>x.id===n.id);
@@ -1093,12 +1139,15 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
 
   // ================= KHỞI ĐỘNG =================
   async function start(){
-    renderLogin(t("connecting")); $("#login").hidden=false;
+    // Hiện ngay dữ liệu lần trước (nếu có) trong lúc tải bản mới từ máy chủ
+    let cached=null; if(token){ try{ cached=JSON.parse(localStorage.getItem("tt_data")||"null"); }catch(e){} }
+    if(cached&&cached.me){ applyData(cached,true); }
+    else { renderLogin(t("connecting")); $("#login").hidden=false; }
     try{
       const r=await api("apiInit",token);
       needSetup=!!r.needSetup; people=r.people||[]; loginMsg=null;
-      if(r.me){ applyData(r); } else { token=null; lsSet("tt_tok",null); renderLogin(); }
-    }catch(e){ renderLogin(t("cantConnect",msgOf(e))); }
+      if(r.me){ applyData(r); } else { if(me) localLogout(); token=null; lsSet("tt_tok",null); lsSet("tt_data",null); renderLogin(); }
+    }catch(e){ if(me) $("#conn").textContent=t("retrying"); else renderLogin(t("cantConnect",msgOf(e))); }
   }
   applyLang();
   token=lsGet("tt_tok");
