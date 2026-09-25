@@ -266,6 +266,8 @@ body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
 .zok{color:var(--ok);font-weight:600}
 .zrole{background:var(--ok-soft)!important;color:var(--ok)!important;border-color:transparent!important}
 #zAdmin{gap:10px}
+.zraw summary{cursor:pointer;font-size:13px;color:var(--ink-2)}
+.zraw pre{white-space:pre-wrap;word-break:break-all;font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px;max-height:260px;overflow:auto}
 .ciw .qbtn{justify-self:end;font-size:13px;padding:4px 8px;margin-top:-2px}
 .ci.short{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
 .ci.short input{accent-color:var(--warn)}
@@ -425,7 +427,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       zTokenSaved:"Đã lưu token, bot: {0}",zAppUrl:"Link app gắn vào cuối tin nhắn",zSaveUrl:"Lưu link",zGroupOn:"Nhóm Zalo chung: <b>đã kết nối</b>",zGroupOff:"Nhóm Zalo chung: chưa kết nối (không bắt buộc)",
       zGroupHint:"Muốn cả nhóm nhận tin: thêm bot vào nhóm Zalo của tổ, trong nhóm nhắn “@tên-bot TT NHOM”, rồi bấm “Kiểm tra tin nhắn mới”.",zClearGroup:"Bỏ nhóm",zPoll:"Kiểm tra tin nhắn mới",zPolled:"Đã kết nối thêm {0} người/nhóm",
       zTrigOn:"Nhắc sắp trễ / quá hạn tự động: <b>đang bật</b> (15 phút/lần).",zTrigOff:"Nhắc sắp trễ / quá hạn tự động: <b>chưa bật</b>. Trong Apps Script chọn hàm <b>batNhacZalo</b> → Chạy (một lần).",
-      zErr:"Lỗi gửi gần nhất: {0}",zRemove:"Gỡ Zalo Bot",zLinkedCount:"{0}/{1} tài khoản đã kết nối Zalo",zShort:"Zalo"},
+      zErr:"Lỗi gửi gần nhất: {0}",zRemove:"Gỡ Zalo Bot",zLinkedCount:"{0}/{1} tài khoản đã kết nối Zalo",zRaw:"Phản hồi gần nhất từ Zalo (dùng khi cần kiểm tra lỗi)",zShort:"Zalo"},
     en:{appName:"Re-cut Log",soundOn:"Sound alert for new jobs / near deadline",newReq:"New re-cut request",close:"Close",
       style:"Style",order:"Production order",typeToSearch:"Type to search…",reason:"Reason",typeReason:"Type a reason…",partsToCut:"Parts to re-cut",addLine:"+ Add part",
       deadline:"Due",note:"Note",notePh:"Fabric roll, shade…",accName:"Name",roles:"Roles",
@@ -480,7 +482,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
       zTokenSaved:"Token saved, bot: {0}",zAppUrl:"App link added to messages",zSaveUrl:"Save link",zGroupOn:"Shared Zalo group: <b>connected</b>",zGroupOff:"Shared Zalo group: not connected (optional)",
       zGroupHint:"To notify a whole group: add the bot to the team's Zalo group, send “@bot-name TT NHOM” in the group, then tap “Check new messages”.",zClearGroup:"Remove group",zPoll:"Check new messages",zPolled:"{0} new person/group connected",
       zTrigOn:"Automatic due-soon / overdue alerts: <b>on</b> (every 15 min).",zTrigOff:"Automatic due-soon / overdue alerts: <b>off</b>. In Apps Script choose function <b>batNhacZalo</b> → Run (once).",
-      zErr:"Last send error: {0}",zRemove:"Remove Zalo Bot",zLinkedCount:"{0}/{1} accounts connected to Zalo",zShort:"Zalo"}
+      zErr:"Last send error: {0}",zRemove:"Remove Zalo Bot",zLinkedCount:"{0}/{1} accounts connected to Zalo",zRaw:"Latest Zalo response (for troubleshooting)",zShort:"Zalo"}
   };
   // Lỗi từ máy chủ (tiếng Việt) → tiếng Anh
   const SERVER_EN={"Mã PIN không đúng.":"Wrong PIN.","Thiếu mã hàng.":"Style is missing.","Cần ít nhất 1 chi tiết có số lượng.":"At least 1 part with a quantity is required.",
@@ -1020,7 +1022,8 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
         '<div>'+t(z.group?"zGroupOn":"zGroupOff")+(z.group?' <button type="button" class="linkbtn" data-act="zClearGroup">'+t("zClearGroup")+'</button>':'')+'</div><div class="fhint">'+t("zGroupHint")+'</div>'+
         '<div><button type="button" class="btn" data-act="zPoll">'+t("zPoll")+'</button></div>'+
         '<div class="fhint">'+t(z.hasTrigger?"zTrigOn":"zTrigOff")+'</div>'+
-        (z.err?'<div class="fhint err">'+t("zErr",esc(z.err))+'</div>':''):'');
+        (z.err?'<div class="fhint err">'+t("zErr",esc(z.err))+'</div>':'')+
+        (z.raw?'<details class="zraw"><summary>'+t("zRaw")+'</summary><pre>'+esc(z.raw)+'</pre></details>':''):'');
   }
   async function zAction(a,b){
     const busyBtn=async(fn)=>{ b.disabled=true; try{ await fn(); }catch(e){ fail(e); } finally{ b.disabled=false; } };
