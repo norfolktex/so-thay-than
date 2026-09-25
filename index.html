@@ -244,206 +244,345 @@ button.card{cursor:pointer}
 .nitem time{font-size:12px;color:var(--ink-3)}
 @media (max-width:400px){.tally.t5{gap:4px}.tally.t5 .n{font-size:20px}.tally.t5 .l{font-size:10px}.tally.t5 button{padding:6px 4px 5px}}
 body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+.stepper{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}
+.stepper button{border:0;background:var(--surface-2);width:44px;font-size:22px;font-weight:600;color:var(--ink);line-height:1}
+.stepper button:active{background:var(--accent-soft)}
+.stepper input{border:0!important;border-radius:0!important;text-align:center;font-weight:700;font-size:17px;background:var(--surface)!important;-moz-appearance:textfield;min-width:0;width:100%}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.line .c-ct{grid-column:span 4}.line .c-sl{grid-column:span 2}
+@media (max-width:420px){.line .c-ct{grid-column:1/-1}.line .c-sl{grid-column:1/-1}}
+.sizef .selv{color:var(--accent)}
+.duebox{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px;display:grid;gap:4px}
+.duet{font-family:var(--f-num);font-size:22px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.langbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;height:34px;min-width:40px;padding:0 10px;font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--ink-2)}
+.loginlang{display:flex;justify-content:flex-end}
+.card.stat{padding:8px;gap:0}
+.ciw{display:grid;gap:4px}
+.ciw .qbtn{justify-self:end;font-size:13px;padding:4px 8px;margin-top:-2px}
+.ci.short{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
+.ci.short input{accent-color:var(--warn)}
+.shortl{display:block;font-size:12.5px;color:var(--warn);font-weight:600}
+.shortc{color:var(--warn);font-weight:600}
+.qbox{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:8px;background:var(--surface-2)}
+.qbox .stepper{max-width:200px}
+.qbox input[type=text]{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 10px;width:100%}
+.brand h1{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.card.stat .sn{font-family:var(--f-num);font-size:24px;font-weight:700;line-height:1.1}
+.tally .ok .n{color:var(--ok)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <h1>Sổ thay thân</h1>
-      <div class="r"><span class="clock" id="clock">--:--</span><button type="button" class="bellbtn" id="bellBtn" hidden aria-label="Thông báo"></button><button type="button" class="me" id="meBtn" hidden></button></div>
+      <h1 data-t="appName">Sổ thay thân</h1>
+      <div class="r">
+        <span class="clock" id="clock">--:--</span>
+        <button type="button" class="langbtn" id="langBtn" aria-label="Language">EN</button>
+        <button type="button" class="bellbtn" id="bellBtn" hidden></button>
+        <button type="button" class="me" id="meBtn" hidden></button>
+      </div>
     </div>
     <nav class="tabs" id="tabs" role="tablist"></nav>
   </header>
   <main id="main"></main>
   <div class="foot">
-    <label class="cbx"><input type="checkbox" id="soundOn" checked> Báo chuông khi có việc mới / sắp trễ</label>
+    <label class="cbx"><input type="checkbox" id="soundOn" checked> <span data-t="soundOn">Báo chuông khi có việc mới / sắp trễ</span></label>
     <span id="conn"></span>
   </div>
 </div>
 
 <button class="fab" type="button" id="addBtn" hidden>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-  Tạo yêu cầu thay thân
+  <span data-t="newReq">Tạo yêu cầu thay thân</span>
 </button>
 
 <!-- form tạo / sửa yêu cầu -->
 <div class="scrim" id="scrim" hidden>
   <form class="sheet" id="form" novalidate>
-    <div class="hd"><h2 id="formTitle">Yêu cầu thay thân</h2><button type="button" class="btn ghost" id="closeBtn">Đóng</button></div>
+    <div class="hd"><h2 id="formTitle"></h2><button type="button" class="btn ghost" id="closeBtn" data-t="close">Đóng</button></div>
     <div class="grid">
       <div class="fhint full" id="catHint"></div>
-      <div class="fld pick"><label for="i-ma">Mã hàng <span class="req">*</span></label><input id="i-ma" autocomplete="off" placeholder="Gõ để tìm…"><div class="sugg" id="s-ma" hidden></div></div>
-      <div class="fld pick"><label for="i-lsx">Lệnh SX</label><input id="i-lsx" autocomplete="off" placeholder="Gõ để tìm…"><div class="sugg" id="s-lsx" hidden></div></div>
-      <div class="fld"><label for="i-ban">Số bàn cắt</label><input id="i-ban" inputmode="numeric" autocomplete="off"></div>
-      <div class="fld full"><label for="i-ly">Lý do</label>
-        <select id="i-ly"></select><input id="i-lyKhac" placeholder="Gõ lý do…" autocomplete="off" hidden>
+      <div class="fld pick"><label for="i-ma"><span data-t="style">Mã hàng</span> <span class="req">*</span></label><input id="i-ma" autocomplete="off" data-tp="typeToSearch"><div class="sugg" id="s-ma" hidden></div></div>
+      <div class="fld pick"><label for="i-lsx" data-t="order">Lệnh SX</label><input id="i-lsx" autocomplete="off" data-tp="typeToSearch"><div class="sugg" id="s-lsx" hidden></div></div>
+      <div class="fld full"><label for="i-ly"><span data-t="reason">Lý do</span> <span class="req">*</span></label>
+        <select id="i-ly"></select><input id="i-lyKhac" autocomplete="off" data-tp="typeReason" hidden>
       </div>
       <div class="fld full">
-        <span class="flabel">Chi tiết cần thay <span class="req">*</span></span>
+        <span class="flabel"><span data-t="partsToCut">Chi tiết cần thay</span> <span class="req">*</span></span>
         <div class="lines" id="lines"></div>
-        <div><button type="button" class="btn" id="addLine">+ Thêm chi tiết</button></div>
+        <div><button type="button" class="btn" id="addLine" data-t="addLine">+ Thêm chi tiết</button></div>
       </div>
-      <div class="fld full"><span class="flabel">Hạn phải thay xong <span class="req">*</span></span>
-        <div class="chips" id="dueChips">
-          <button type="button" class="chip" data-m="30">30 phút</button>
-          <button type="button" class="chip" data-m="60">1 giờ</button>
-          <button type="button" class="chip" data-m="120" aria-pressed="true">2 giờ</button>
-          <button type="button" class="chip" data-m="240">4 giờ</button>
-          <button type="button" class="chip" data-m="eod">Hết ca (16:30)</button>
-        </div>
-        <input id="i-han" class="inp" type="datetime-local" aria-label="Chọn giờ hạn cụ thể">
-        <span class="duehint" id="dueHint"></span>
+      <div class="fld full"><span class="flabel" data-t="deadline">Hạn phải thay xong</span>
+        <div class="duebox" id="dueBox"></div>
       </div>
-      <div class="fld full"><label for="i-note">Ghi chú</label><textarea id="i-note" placeholder="Vải lấy từ cây nào, ánh màu…"></textarea></div>
+      <div class="fld full"><label for="i-note" data-t="note">Ghi chú</label><textarea id="i-note" data-tp="notePh"></textarea></div>
     </div>
-    <datalist id="dl-ct"><option value="Thân trước"><option value="Thân sau"><option value="Tay áo"><option value="Cổ"><option value="Chân cổ"><option value="Nẹp"><option value="Túi"><option value="Đáp túi"><option value="Lưng quần"><option value="Thân trước quần"><option value="Thân sau quần"><option value="Đáp"><option value="Bo tay"></datalist>
+    <datalist id="dl-ct"></datalist>
     <div class="err" id="formErr" hidden></div>
-    <div class="actions"><button type="submit" class="btn primary" id="saveBtn">Gửi yêu cầu</button></div>
+    <div class="actions"><button type="submit" class="btn primary" id="saveBtn"></button></div>
   </form>
 </div>
 
 <!-- thông báo -->
-<div class="scrim" id="bell" hidden><div class="sheet" id="bellBody" role="dialog" aria-label="Thông báo"></div></div>
+<div class="scrim" id="bell" hidden><div class="sheet" id="bellBody" role="dialog"></div></div>
 
 <!-- chi tiết phiếu -->
-<div class="scrim" id="detail" hidden><div class="sheet" id="detailBody" role="dialog" aria-label="Chi tiết phiếu"></div></div>
+<div class="scrim" id="detail" hidden><div class="sheet" id="detailBody" role="dialog"></div></div>
 
 <!-- tài khoản -->
 <div class="scrim" id="acct" hidden>
   <form class="sheet" id="acctForm" novalidate>
-    <div class="hd"><h2 id="acctTitle">Thêm tài khoản</h2><button type="button" class="btn ghost" id="acctClose">Đóng</button></div>
-    <div class="fld"><label for="a-ten">Họ tên / tên gọi <span class="req">*</span></label><input id="a-ten" autocomplete="off" placeholder="VD: Chị Lan (QC chuyền 3)"></div>
-    <div class="fld"><span class="flabel">Vai trò <span class="req">*</span></span>
-      <label class="cbx"><input type="checkbox" id="r-yc"> Người yêu cầu (chuyền, QC)</label>
-      <label class="cbx"><input type="checkbox" id="r-duyet"> Người duyệt (tổ trưởng / quản đốc)</label>
-      <label class="cbx"><input type="checkbox" id="r-xl"> Người xử lý (thợ cắt)</label>
-      <label class="cbx"><input type="checkbox" id="r-admin"> Quản trị (tài khoản, danh mục, dọn dữ liệu)</label>
+    <div class="hd"><h2 id="acctTitle"></h2><button type="button" class="btn ghost" id="acctClose" data-t="close">Đóng</button></div>
+    <div class="fld"><label for="a-ten"><span data-t="accName">Họ tên / tên gọi</span> <span class="req">*</span></label><input id="a-ten" autocomplete="off"></div>
+    <div class="fld"><span class="flabel"><span data-t="roles">Vai trò</span> <span class="req">*</span></span>
+      <label class="cbx"><input type="checkbox" id="r-yc"> <span data-t="roleYcLong">Người yêu cầu (chuyền, QC)</span></label>
+      <label class="cbx"><input type="checkbox" id="r-xl"> <span data-t="roleXlLong">Tổ thay thân (cắt, tick, bàn giao)</span></label>
+      <label class="cbx"><input type="checkbox" id="r-admin"> <span data-t="roleAdminLong">Quản trị (tài khoản, danh mục, đổi hạn)</span></label>
     </div>
-    <div class="fld"><label for="a-pin" id="a-pinLbl">Mã PIN 4–6 số <span class="req">*</span></label><input id="a-pin" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6"></div>
-    <label class="cbx" id="a-offWrap"><input type="checkbox" id="a-off"> Khóa tài khoản (không đăng nhập được nữa)</label>
+    <div class="fld"><label for="a-pin" id="a-pinLbl"></label><input id="a-pin" type="password" inputmode="numeric" autocomplete="new-password" maxlength="6"></div>
+    <label class="cbx" id="a-offWrap"><input type="checkbox" id="a-off"> <span data-t="lockAcc">Khóa tài khoản (không đăng nhập được nữa)</span></label>
     <div class="err" id="acctErr" hidden></div>
-    <div class="actions"><button type="submit" class="btn primary">Lưu tài khoản</button></div>
+    <div class="actions"><button type="submit" class="btn primary" data-t="saveAcc">Lưu tài khoản</button></div>
   </form>
 </div>
 
 <!-- đăng nhập -->
-<div class="login" id="login" hidden><div class="in" id="loginBody"></div></div>
+<div class="login" id="login" hidden><div class="in"><div class="loginlang"><button type="button" class="langbtn" id="langBtn2">EN</button></div><div id="loginBody"></div></div></div>
 <div class="toast" id="toast" hidden></div>
+
 <script>
 // Đường link ứng dụng web Apps Script (kết thúc bằng /exec)
 window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8yD5D4o2RNwadE0IltezUM2XiODb43BSYpoMaItwjS7x/exec";
 </script>
 <script>
 (function(){
-  const WARN_MIN=30, EOD={h:16,m:30}, POLL_MS=15000;
+  const WARN_MIN=30, POLL_MS=15000;
   const $=s=>document.querySelector(s);
   const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const ROLE_LBL={yc:"Yêu cầu",duyet:"Duyệt",xl:"Xử lý",admin:"Quản trị"};
-  const ST_LBL={cho_duyet:"Chờ duyệt",da_duyet:"Đã duyệt · chờ cắt",dang:"Đang thay",cho_ban_giao:"Cắt xong · chờ bàn giao",xong:"Hoàn thành",tu_choi:"Bị từ chối",huy:"Đã hủy"};
-  const ST_CLS={cho_duyet:"p-cd",da_duyet:"p-dd",dang:"p-dang",cho_ban_giao:"p-bg",xong:"p-xong",tu_choi:"p-tc",huy:"p-huy"};
-  const OPEN=["cho_duyet","da_duyet","dang","cho_ban_giao"], CLOSED=["xong","tu_choi","huy"], WORK=["da_duyet","dang","cho_ban_giao"], CUT=["da_duyet","dang"];
-  const ACT_LBL={tao:"gửi yêu cầu mới",sua:"sửa yêu cầu",duyet:"đã duyệt",tuchoi:"đã từ chối",doihan:"đổi hạn",catxong:"đã cắt xong – chờ bàn giao",bangiao:"đã bàn giao",huy:"đã hủy phiếu",xong:"hoàn thành"};
 
+  // ================= NGÔN NGỮ =================
+  const I18N={
+    vi:{appName:"Sổ thay thân",soundOn:"Báo chuông khi có việc mới / sắp trễ",newReq:"Tạo yêu cầu thay thân",close:"Đóng",
+      style:"Mã hàng",order:"Lệnh SX",typeToSearch:"Gõ để tìm…",reason:"Lý do",typeReason:"Gõ lý do…",partsToCut:"Chi tiết cần thay",addLine:"+ Thêm chi tiết",
+      deadline:"Hạn phải thay xong",note:"Ghi chú",notePh:"Vải lấy từ cây nào, ánh màu…",accName:"Họ tên / tên gọi",roles:"Vai trò",
+      roleYcLong:"Người yêu cầu (chuyền, QC)",roleXlLong:"Tổ thay thân (cắt, tick, bàn giao)",roleAdminLong:"Quản trị (tài khoản, danh mục, đổi hạn)",
+      lockAcc:"Khóa tài khoản (không đăng nhập được nữa)",saveAcc:"Lưu tài khoản",
+      st_cho_cat:"Chờ cắt",st_da_duyet:"Chờ cắt",st_dang:"Đang cắt",st_cho_ban_giao:"Cắt xong · chờ bàn giao",st_xong:"Hoàn thành",st_tu_choi:"Bị từ chối",st_huy:"Đã hủy",
+      role_yc:"Yêu cầu",role_xl:"Tổ thay thân",role_admin:"Quản trị",role_duyet:"",
+      tab_tong:"Tổng quan",tab_viec:"Việc cần làm",tab_gui:"Tôi đã gửi",tab_ls:"Lịch sử",tab_qt:"Quản trị",
+      t_late:"Quá hạn",t_run:"Đang thay",t_bg:"Chờ bàn giao",t_done:"Xong hôm nay",
+      searchAll:"Tìm số phiếu, mã hàng, LSX, người…",searchWork:"Tìm trong việc cần làm…",searchMine:"Tìm trong phiếu tôi đã gửi…",searchLs:"Tìm mã hàng, LSX…",
+      demoBanner:"<b>3 phiếu ví dụ</b> để xem cách hiển thị tiến độ. Chúng biến mất khi có yêu cầu thật đầu tiên.",
+      lateBanner:"<b>{0} phiếu quá hạn.</b> Tổ thay thân cần hoàn thành ngay.",
+      e_late:"Không có phiếu quá hạn.",e_run:"Không có phiếu nào đang thay.",e_bg:"Không có phiếu chờ bàn giao.",e_done:"Chưa có phiếu hoàn thành hôm nay.",e_q:"Không có phiếu khớp “{0}”.",
+      sec_cut:"Cần cắt thay",sec_bg:"Đã cắt xong · chờ bàn giao",e_cut:"Không có phiếu nào cần cắt.",sec_open:"Đang mở",sec_closed:"Đã đóng gần đây",e_open:"Không có phiếu đang mở.",
+      pickMonth:"Chọn tháng",month:"Tháng {0}/{1}",loadingMonth:"Đang tải dữ liệu…",s_total:"Phiếu trong tháng",s_done:"Hoàn thành",s_ontime:"Đúng hạn",s_qty:"Cái đã thay",
+      e_ls:"Chưa có phiếu đã đóng trong tháng này.",lsBanner:"Toàn bộ lịch sử nằm trong Google Sheet (sheet Phieu, ChiTiet, NhatKy). <a href=\"{0}\" target=\"_blank\" rel=\"noopener\">Mở Google Sheet</a> để lọc, làm báo cáo hoặc tải về Excel.",
+      addAcc:"+ Thêm tài khoản",openSheet:"Mở Google Sheet",accounts:"Tài khoản ({0})",locked:"Đã khóa",you:"(bạn)",edit:"Sửa",
+      catTitle:"Danh mục LSX · màu · cỡ",catInfo:"Hiện có <b>{0}</b> LSX, {1} dòng. Để cập nhật, mở Google Sheet, dán dữ liệu vào sheet <b>DanhMuc</b> (4 cột Mã hàng, LSX, Màu, Cỡ). Lý do và chi tiết thường thay sửa ở sheet <b>CauHinh</b>. Sau đó bấm nút dưới đây.",
+      reloadCat:"Tải lại danh mục",catReloaded:"Đã tải lại danh mục: {0} dòng",loginNote:"Mỗi người đăng nhập bằng tên + mã PIN. Máy đã đăng nhập sẽ nhớ người dùng trong 60 ngày; bấm vào tên ở góc trên để đổi người.",
+      left:"Còn {0}",lateBy:"Trễ {0}",due:"hạn {0}",onTime:"đúng hạn",lateShort:"trễ {0}",p_late:"Quá hạn",p_warn:"Sắp hết giờ",
+      progress:"Đã thay <b>{0}/{1}</b> cái · {2}/{3} chi tiết",partsCount:"{0} chi tiết · {1} cái",who_yc:"Yêu cầu",who_cut:"Cắt",example:"VÍ DỤ",
+      k_due:"Hạn",k_req:"Người yêu cầu",k_cutter:"Người cắt",k_cutDone:"Cắt xong",k_handed:"Bàn giao",k_reason:"Lý do",k_note:"Ghi chú",k_cancelReason:"Lý do hủy",k_rejReason:"Lý do từ chối",
+      color:"Màu",size:"Cỡ",tickHint:"Tick từng chi tiết khi đã cắt thay xong. Khi đủ tất cả, phiếu chuyển sang “Chờ bàn giao”.",
+      handTitle:"Bàn giao cho {0}",handHint:"Đã cắt xong lúc {0}. Phiếu chỉ hoàn thành khi xác nhận đã giao chi tiết cho người yêu cầu.",handBtn:"Xác nhận đã bàn giao",
+      changeDue:"Đổi hạn",newDue:"Hạn mới",saveDue:"Lưu hạn mới",editReq:"Sửa yêu cầu",cancelReq:"Hủy phiếu",cancelReason:"Lý do hủy",no:"Thôi",
+      history:"Lịch sử phiếu",loading:"Đang tải…",
+      formNew:"Yêu cầu thay thân",formEdit:"Sửa yêu cầu {0}",send:"Gửi yêu cầu",saveChanges:"Lưu thay đổi",sending:"Đang gửi…",
+      part:"Chi tiết",qty:"Số lượng",pickOrType:"Chọn hoặc gõ…",colorPh:"Bấm chọn bên dưới hoặc gõ",colorPh2:"Gõ màu",noSizes:"Chưa có cỡ trong danh mục cho mã/LSX này. Chọn mã hàng hoặc LSX trước.",
+      removeLine:"Bỏ dòng này",otherReason:"Lý do khác (gõ tay)…",
+      dueRule:"Tạo trước 14:00 → xong trước 17:00 cùng ngày. Từ 14:00 → xong trước 11:30 ngày hôm sau (bỏ qua Chủ nhật).",dueIs:"Hạn: {0}",
+      missing:"Còn thiếu: {0}.",m_style:"mã hàng",m_part:"ít nhất 1 chi tiết có số lượng",m_half:"dòng chi tiết đang nhập dở",m_size:"cỡ ở dòng chi tiết",m_reason:"lý do",
+      saved:"Đã lưu thay đổi",sent:"Đã gửi yêu cầu {0} – hạn {1}",
+      catHintOn:"Gõ mã hàng hoặc LSX để chọn từ danh mục ({0} LSX). Màu và cỡ ở từng dòng sẽ hiện theo mã đã chọn.",catHintOff:"Chưa có danh mục LSX, hãy gõ tay. Quản trị có thể dán danh mục vào sheet DanhMuc.",
+      addAccT:"Thêm tài khoản",editAccT:"Sửa tài khoản",pinNew:"Mã PIN 4–6 số",pinReset:"Đặt lại mã PIN (để trống nếu giữ nguyên)",accSaved:"Đã lưu tài khoản {0}",
+      setupT:"Thiết lập sổ thay thân",setupP:"Tạo tài khoản quản trị đầu tiên. Sau đó thêm tài khoản cho người yêu cầu và tổ thay thân ở mục Quản trị.",yourName:"Tên của bạn",pin2:"Nhập lại PIN",createAdmin:"Tạo tài khoản quản trị",pinMismatch:"Hai lần nhập PIN không khớp.",
+      whoT:"Ai đang dùng máy này?",whoP:"Chọn tên của bạn và nhập mã PIN.",pinOf:"Mã PIN của {0}",login:"Đăng nhập",hello:"Xin chào {0}",connecting:"Đang kết nối…",
+      cantConnect:"Không kết nối được máy chủ: {0}. Tải lại trang để thử lại.",sessionExpired:"Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.",netErr:"Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.",
+      serverErr:"Máy chủ trả về lỗi. Kiểm tra lại bản triển khai Apps Script (Bất kỳ ai).",noApi:"Chưa cấu hình địa chỉ máy chủ (API_URL).",
+      saving:"Đang lưu…",synced:"Đã đồng bộ · {0}",retrying:"Mất kết nối, đang thử lại…",
+      notifT:"Thông báo",notifEmpty:"Chưa có thông báo nào trong 3 ngày qua.",notifOld:"Phiếu này đã cũ, xem ở tab Lịch sử.",moreN:" (+{0} thông báo khác)",bellLbl:"Thông báo",
+      a_tao:"gửi yêu cầu mới",a_sua:"sửa yêu cầu",a_duyet:"đã duyệt",a_tuchoi:"đã từ chối",a_doihan:"đổi hạn",a_catxong:"đã cắt xong – chờ bàn giao",a_bangiao:"đã bàn giao",a_huy:"đã hủy phiếu",a_xong:"hoàn thành",
+      a_tick:"đã thay",a_botick:"bỏ tick",a_nhan:"nhận việc",a_giao:"giao việc",
+      lateAlert:"Quá hạn: {0}",warnAlert:"Còn ≤ {0} phút: {1}",cutDoneToast:"Đã cắt xong {0} – bàn giao cho {1}",handDone:"Hoàn thành {0} – đã bàn giao",canceled:"Đã hủy phiếu {0}",dueSaved:"Đã lưu hạn mới",
+      today:"hôm nay",yesterday:"hôm qua",tomorrow:"ngày mai",hShort:"g",mShort:"p",
+      editQty:"Sửa SL",madeQty:"Số lượng làm được",shortReason:"Lý do thiếu",shortPh:"VD: không đủ vải",save:"Lưu",made:"Làm được {0}/{1}",shortBy:"thiếu {0}",
+      qtyHint:"Bấm ô vuông nếu làm đủ. Nếu thiếu (VD không đủ vải), bấm “Sửa SL” để nhập số lượng thực tế.",shortTotal:" (thiếu {0})",qtySaved:"Đã lưu số lượng"},
+    en:{appName:"Re-cut Log",soundOn:"Sound alert for new jobs / near deadline",newReq:"New re-cut request",close:"Close",
+      style:"Style",order:"Production order",typeToSearch:"Type to search…",reason:"Reason",typeReason:"Type a reason…",partsToCut:"Parts to re-cut",addLine:"+ Add part",
+      deadline:"Due",note:"Note",notePh:"Fabric roll, shade…",accName:"Name",roles:"Roles",
+      roleYcLong:"Requester (sewing line, QC)",roleXlLong:"Re-cut team (cut, tick, hand over)",roleAdminLong:"Admin (accounts, catalog, deadlines)",
+      lockAcc:"Lock account (can no longer sign in)",saveAcc:"Save account",
+      st_cho_cat:"Waiting to cut",st_da_duyet:"Waiting to cut",st_dang:"Cutting",st_cho_ban_giao:"Cut · awaiting handover",st_xong:"Completed",st_tu_choi:"Rejected",st_huy:"Cancelled",
+      role_yc:"Requester",role_xl:"Re-cut team",role_admin:"Admin",role_duyet:"",
+      tab_tong:"Overview",tab_viec:"My jobs",tab_gui:"My requests",tab_ls:"History",tab_qt:"Admin",
+      t_late:"Overdue",t_run:"In progress",t_bg:"Awaiting handover",t_done:"Done today",
+      searchAll:"Search ticket, style, order, person…",searchWork:"Search my jobs…",searchMine:"Search my requests…",searchLs:"Search style, order…",
+      demoBanner:"<b>3 sample tickets</b> show how progress looks. They disappear once the first real request is sent.",
+      lateBanner:"<b>{0} overdue ticket(s).</b> The re-cut team needs to finish them now.",
+      e_late:"No overdue tickets.",e_run:"No tickets in progress.",e_bg:"Nothing awaiting handover.",e_done:"No tickets completed today.",e_q:"No tickets match “{0}”.",
+      sec_cut:"To cut",sec_bg:"Cut · awaiting handover",e_cut:"Nothing to cut.",sec_open:"Open",sec_closed:"Recently closed",e_open:"No open tickets.",
+      pickMonth:"Choose month",month:"{0}/{1}",loadingMonth:"Loading…",s_total:"Tickets this month",s_done:"Completed",s_ontime:"On time",s_qty:"Pieces re-cut",
+      e_ls:"No closed tickets this month.",lsBanner:"The full history lives in the Google Sheet (Phieu, ChiTiet, NhatKy). <a href=\"{0}\" target=\"_blank\" rel=\"noopener\">Open Google Sheet</a> to filter, report or download to Excel.",
+      addAcc:"+ Add account",openSheet:"Open Google Sheet",accounts:"Accounts ({0})",locked:"Locked",you:"(you)",edit:"Edit",
+      catTitle:"Style · order · color · size catalog",catInfo:"<b>{0}</b> orders, {1} rows. To update, paste into the <b>DanhMuc</b> sheet (4 columns: Style, Order, Color, Size). Reasons and common parts are in the <b>CauHinh</b> sheet. Then press the button below.",
+      reloadCat:"Reload catalog",catReloaded:"Catalog reloaded: {0} rows",loginNote:"Everyone signs in with name + PIN. A phone stays signed in for 60 days; tap your name at the top to switch user.",
+      left:"{0} left",lateBy:"{0} late",due:"due {0}",onTime:"on time",lateShort:"{0} late",p_late:"Overdue",p_warn:"Due soon",
+      progress:"Re-cut <b>{0}/{1}</b> pcs · {2}/{3} parts",partsCount:"{0} parts · {1} pcs",who_yc:"Requested by",who_cut:"Cut by",example:"SAMPLE",
+      k_due:"Due",k_req:"Requester",k_cutter:"Cut by",k_cutDone:"Cut done",k_handed:"Handed over",k_reason:"Reason",k_note:"Note",k_cancelReason:"Cancel reason",k_rejReason:"Reject reason",
+      color:"Color",size:"Size",tickHint:"Tick each part once it is re-cut. When all are ticked, the ticket moves to “Awaiting handover”.",
+      handTitle:"Hand over to {0}",handHint:"Cut done at {0}. The ticket is completed only after the parts are handed to the requester.",handBtn:"Confirm handover",
+      changeDue:"Change due time",newDue:"New due time",saveDue:"Save due time",editReq:"Edit request",cancelReq:"Cancel ticket",cancelReason:"Cancel reason",no:"Back",
+      history:"Ticket history",loading:"Loading…",
+      formNew:"Re-cut request",formEdit:"Edit request {0}",send:"Send request",saveChanges:"Save changes",sending:"Sending…",
+      part:"Part",qty:"Qty",pickOrType:"Pick or type…",colorPh:"Tap below or type",colorPh2:"Type color",noSizes:"No sizes in the catalog for this style/order. Choose a style or order first.",
+      removeLine:"Remove this line",otherReason:"Other reason (type)…",
+      dueRule:"Before 14:00 → due 17:00 the same day. From 14:00 → due 11:30 the next day (Sundays skipped).",dueIs:"Due: {0}",
+      missing:"Missing: {0}.",m_style:"style",m_part:"at least 1 part with a quantity",m_half:"an unfinished part line",m_size:"size on a part line",m_reason:"reason",
+      saved:"Changes saved",sent:"Request {0} sent – due {1}",
+      catHintOn:"Type a style or order to pick from the catalog ({0} orders). Colors and sizes follow the chosen style.",catHintOff:"No catalog yet, type manually. Admin can paste the catalog into the DanhMuc sheet.",
+      addAccT:"Add account",editAccT:"Edit account",pinNew:"PIN, 4–6 digits",pinReset:"Reset PIN (leave blank to keep)",accSaved:"Account {0} saved",
+      setupT:"Set up the re-cut log",setupP:"Create the first admin account. Then add accounts for requesters and the re-cut team under Admin.",yourName:"Your name",pin2:"Repeat PIN",createAdmin:"Create admin account",pinMismatch:"The two PINs do not match.",
+      whoT:"Who is using this phone?",whoP:"Choose your name and enter your PIN.",pinOf:"PIN for {0}",login:"Sign in",hello:"Hello {0}",connecting:"Connecting…",
+      cantConnect:"Cannot reach the server: {0}. Reload the page to try again.",sessionExpired:"Your session expired, please sign in again.",netErr:"Cannot reach the server. Check the connection and try again.",
+      serverErr:"The server returned an error. Check the Apps Script deployment (Anyone).",noApi:"Server address (API_URL) is not set.",
+      saving:"Saving…",synced:"Synced · {0}",retrying:"Connection lost, retrying…",
+      notifT:"Notifications",notifEmpty:"No notifications in the last 3 days.",notifOld:"This ticket is old, see the History tab.",moreN:" (+{0} more)",bellLbl:"Notifications",
+      a_tao:"sent a new request",a_sua:"edited a request",a_duyet:"approved",a_tuchoi:"rejected",a_doihan:"changed the due time",a_catxong:"finished cutting – awaiting handover",a_bangiao:"handed over",a_huy:"cancelled",a_xong:"completed",
+      a_tick:"cut",a_botick:"unticked",a_nhan:"took",a_giao:"assigned",
+      lateAlert:"Overdue: {0}",warnAlert:"≤ {0} min left: {1}",cutDoneToast:"{0} cut – hand over to {1}",handDone:"{0} completed – handed over",canceled:"Ticket {0} cancelled",dueSaved:"Due time saved",
+      today:"today",yesterday:"yesterday",tomorrow:"tomorrow",hShort:"h",mShort:"m",
+      editQty:"Edit qty",madeQty:"Quantity made",shortReason:"Shortage reason",shortPh:"e.g. not enough fabric",save:"Save",made:"Made {0}/{1}",shortBy:"short {0}",
+      qtyHint:"Tick the box if fully done. If short (e.g. not enough fabric), tap “Edit qty” to enter the actual quantity.",shortTotal:" (short {0})",qtySaved:"Quantity saved"}
+  };
+  // Lỗi từ máy chủ (tiếng Việt) → tiếng Anh
+  const SERVER_EN={"Mã PIN không đúng.":"Wrong PIN.","Thiếu mã hàng.":"Style is missing.","Cần ít nhất 1 chi tiết có số lượng.":"At least 1 part with a quantity is required.",
+    "Phiếu không còn mở.":"This ticket is no longer open.","Chỉ tổ thay thân được tick.":"Only the re-cut team can tick.","Hệ thống đang bận, thử lại sau vài giây.":"The system is busy, try again in a few seconds.",
+    "Tổ thay thân đã bắt đầu cắt, không sửa được nữa.":"The re-cut team has started; the request can no longer be edited.","Bạn không sửa được phiếu của người khác.":"You cannot edit someone else's request.",
+    "Bạn không hủy được phiếu này.":"You cannot cancel this ticket.","Phiếu chưa cắt xong hoặc đã bàn giao rồi.":"The ticket is not cut yet or already handed over.",
+    "Bạn không xác nhận bàn giao được phiếu này.":"You cannot confirm handover for this ticket.","Đã có tài khoản trùng tên.":"An account with this name already exists.",
+    "Mã PIN phải gồm 4–6 chữ số.":"PIN must be 4–6 digits.","Nhập tên.":"Enter a name.","Chọn ít nhất một vai trò.":"Choose at least one role.",
+    "Phải còn ít nhất một Quản trị đang hoạt động.":"At least one active admin is required.","Chỉ Quản trị được sửa tài khoản.":"Only admins can edit accounts.",
+    "Tài khoản của bạn không có quyền tạo yêu cầu.":"Your account cannot create requests.","Chỉ Quản trị đổi hạn được.":"Only admins can change the due time."};
+  let lang=(()=>{ try{ return localStorage.getItem("tt_lang")||"vi"; }catch(e){ return "vi"; } })();
+  function t(k,...a){ let s=(I18N[lang]&&I18N[lang][k]); if(s==null) s=I18N.vi[k]; if(s==null) s=k; return a.length?s.replace(/\{(\d)\}/g,(m,i)=>a[i]??""):s; }
+  function applyLang(){
+    document.documentElement.lang=lang;
+    document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+    document.querySelectorAll("[data-tp]").forEach(el=>el.placeholder=t(el.dataset.tp));
+    const other=lang==="vi"?"EN":"VI"; $("#langBtn").textContent=other; $("#langBtn2").textContent=other;
+    document.title=t("appName");
+  }
+  function toggleLang(){ lang=lang==="vi"?"en":"vi"; try{ localStorage.setItem("tt_lang",lang); }catch(e){}
+    applyLang(); render(); if(!$("#login").hidden) renderLogin(); if(openId) renderDetail(); if(!$("#scrim").hidden){ renderLines(); renderDue(); renderLyDo(lyDoVal()); updateCatHint(); setFormTitle(); } if(!$("#bell").hidden) openBell(); }
+  $("#langBtn").addEventListener("click",toggleLang); $("#langBtn2").addEventListener("click",toggleLang);
+
+  // ================= TRẠNG THÁI =================
+  const ST_CLS={cho_cat:"p-dd",da_duyet:"p-dd",dang:"p-dang",cho_ban_giao:"p-bg",xong:"p-xong",tu_choi:"p-tc",huy:"p-huy"};
+  const OPEN=["cho_cat","da_duyet","dang","cho_ban_giao"], CLOSED=["xong","tu_choi","huy"], CUT=["cho_cat","da_duyet","dang"], NOT_STARTED=["cho_cat","da_duyet"];
   let token=null, ver="", people=[], users=[], me=null, lenh=[], months=[], sheetUrl="", notif=[], lyDoList=[], ctList=[];
-  let loaded=false, needSetup=false, tab="tong", filter="open", q="", lsMonth="";
-  let openId=null, editingId=null, editAcctId=null, dueSel="120";
+  let loaded=false, needSetup=false, tab="tong", filter="run", q="", lsMonth="";
+  let openId=null, editingId=null, editAcctId=null;
   const logCache={}, monthCache={};
 
-  // ---------- helpers ----------
+  // ================= TIỆN ÍCH =================
   const pad=n=>String(n).padStart(2,"0");
   const fmtHM=ms=>{const d=new Date(ms);return pad(d.getHours())+":"+pad(d.getMinutes())};
-  function fmtDay(ms){const d=new Date(ms),t=new Date();
-    if(d.toDateString()===t.toDateString())return "hôm nay";
-    const y=new Date(t);y.setDate(t.getDate()-1);if(d.toDateString()===y.toDateString())return "hôm qua";
-    const m=new Date(t);m.setDate(t.getDate()+1);if(d.toDateString()===m.toDateString())return "ngày mai";
+  function fmtDay(ms){const d=new Date(ms),tt=new Date();
+    if(d.toDateString()===tt.toDateString())return t("today");
+    const y=new Date(tt);y.setDate(tt.getDate()-1);if(d.toDateString()===y.toDateString())return t("yesterday");
+    const m=new Date(tt);m.setDate(tt.getDate()+1);if(d.toDateString()===m.toDateString())return t("tomorrow");
     return pad(d.getDate())+"/"+pad(d.getMonth()+1)}
   const fmtDT=ms=>ms?fmtHM(ms)+" "+fmtDay(ms):"";
   const fmtFull=ms=>{if(!ms)return "";const d=new Date(ms);return pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear()+" "+fmtHM(ms)};
-  const fmtDur=min=>{min=Math.abs(Math.round(min));const h=Math.floor(min/60),m=min%60;return h?h+"g"+pad(m):m+"p"};
+  const fmtDur=min=>{min=Math.abs(Math.round(min));const h=Math.floor(min/60),m=min%60;return h?h+t("hShort")+pad(m):m+t("mShort")};
   const toLocalInput=ms=>{const d=new Date(ms);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes())};
-  const eodMs=()=>{const d=new Date();d.setHours(EOD.h,EOD.m,0,0);if(d.getTime()<=Date.now())d.setDate(d.getDate()+1);return d.getTime()};
   const isToday=ms=>ms&&new Date(ms).toDateString()===new Date().toDateString();
   const monthKey=ms=>{const d=new Date(ms);return d.getFullYear()+"-"+pad(d.getMonth()+1)};
-  const monthLbl=k=>{const[y,m]=k.split("-");return "Tháng "+Number(m)+"/"+y};
+  const monthLbl=k=>{const[y,m]=k.split("-");return t("month",Number(m),y)};
   const initials=s=>String(s||"?").trim().split(/\s+/).slice(-1)[0].charAt(0).toUpperCase();
   const has=r=>!!me&&(me.roles||[]).some(x=>x===r||x==="admin");
   const isAdmin=()=>!!me&&(me.roles||[]).includes("admin");
+  const stLbl=s=>t("st_"+s);
   const itemsOf=l=>Object.entries(l.items||{}).map(([id,v])=>Object.assign({id},v)).sort((a,b)=>(a.o||0)-(b.o||0));
-  function progress(l){ const it=itemsOf(l); let tot=0,done=0,nd=0; it.forEach(i=>{tot+=Number(i.sl)||0; if(i.done){done+=Number(i.sl)||0;nd++;}}); return {n:it.length,nd,tot,done,pct:tot?Math.round(done*100/tot):0}; }
+  const started=l=>itemsOf(l).some(i=>i.done);
+  const dq=i=>i.doneQty==null?Number(i.sl)||0:Number(i.doneQty)||0;
+  function progress(l){ const it=itemsOf(l); let tot=0,done=0,nd=0,short=0; it.forEach(i=>{tot+=Number(i.sl)||0; if(i.done){done+=dq(i);nd++;short+=Math.max(0,(Number(i.sl)||0)-dq(i));}}); return {n:it.length,nd,tot,done,short,pct:tot?Math.round(done*100/tot):0}; }
   function stateOf(l,now){ if(!OPEN.includes(l.status))return "closed"; const left=(l.han-now)/60000; return left<0?"late":left<=WARN_MIN?"warn":"ok"; }
   const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
   const lsSet=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+  /** Hạn: tạo trước 14:00 → 17:00 cùng ngày; từ 14:00 → 11:30 hôm sau; Chủ nhật dời sang thứ Hai. (Máy chủ tính lại khi lưu.) */
+  function dueFor(ms){ const d=new Date(ms), r=new Date(ms); const hm=d.getHours()*60+d.getMinutes();
+    if(hm<14*60) r.setHours(17,0,0,0); else { r.setDate(r.getDate()+1); r.setHours(11,30,0,0); }
+    if(r.getDay()===0) r.setDate(r.getDate()+1); return r.getTime(); }
 
   let toastT=null;
-  function toast(msg,late){const t=$("#toast");t.textContent=msg;t.className="toast"+(late?" late":"");t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,late?7000:3500)}
+  function toast(msg,late){const el=$("#toast");el.textContent=msg;el.className="toast"+(late?" late":"");el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,late?7000:3500)}
   let audioCtx=null;
   function unlockAudio(){ if(audioCtx)return; try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){} }
   function beep(times){ if(!$("#soundOn").checked||!audioCtx)return;
     try{ if(audioCtx.state==="suspended")audioCtx.resume();
-      for(let i=0;i<times;i++){const o=audioCtx.createOscillator(),g=audioCtx.createGain(),t=audioCtx.currentTime+i*.35;
-        o.frequency.value=times>1?988:784;o.type="square";g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.25);
-        o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+.3);} }catch(e){}
+      for(let i=0;i<times;i++){const o=audioCtx.createOscillator(),g=audioCtx.createGain(),tm=audioCtx.currentTime+i*.35;
+        o.frequency.value=times>1?988:784;o.type="square";g.gain.setValueAtTime(.0001,tm);g.gain.exponentialRampToValueAtTime(.18,tm+.02);g.gain.exponentialRampToValueAtTime(.0001,tm+.25);
+        o.connect(g).connect(audioCtx.destination);o.start(tm);o.stop(tm+.3);} }catch(e){}
     try{navigator.vibrate&&navigator.vibrate(times>1?[200,100,200]:200)}catch(e){} }
   document.addEventListener("pointerdown",unlockAudio,{once:true});
 
-  // ---------- gọi máy chủ Apps Script ----------
+  // ================= GỌI MÁY CHỦ =================
   const API_URL=window.API_URL||"";
   function api(fn,...args){
     if(API_URL) return fetch(API_URL,{method:"POST",redirect:"follow",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn,args})})
-      .catch(()=>{ throw new Error("Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại."); })
-      .then(r=>r.text()).then(t=>{ let j; try{ j=JSON.parse(t); }catch(e){ throw new Error("Máy chủ trả về lỗi. Kiểm tra lại bản triển khai Apps Script (Bất kỳ ai)."); }
+      .catch(()=>{ throw new Error(t("netErr")); })
+      .then(r=>r.text()).then(tx=>{ let j; try{ j=JSON.parse(tx); }catch(e){ throw new Error(t("serverErr")); }
         if(!j.ok) throw new Error(j.error); return j.data; });
     return new Promise((res,rej)=>{
-      if(!(window.google&&google.script&&google.script.run)) return rej(new Error("Chưa cấu hình địa chỉ máy chủ (API_URL)."));
+      if(!(window.google&&google.script&&google.script.run)) return rej(new Error(t("noApi")));
       google.script.run.withSuccessHandler(res).withFailureHandler(e=>rej(e instanceof Error?e:new Error(String(e&&e.message||e))))[fn](...args); }); }
-  function msgOf(e){ const m=String(e&&e.message||e||""); return m.replace(/^Error:\s*/,"").replace(/^Exception:\s*/,""); }
-  function fail(e){ const m=msgOf(e);
-    if(m==="AUTH"){ toast("Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.",true); localLogout(); return; }
-    toast(m||"Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.",true); }
+  function msgOf(e){ const m=String(e&&e.message||e||"").replace(/^Error:\s*/,"").replace(/^Exception:\s*/,""); return lang==="en"&&SERVER_EN[m]?SERVER_EN[m]:m; }
+  function fail(e){ const m=msgOf(e); if(m==="AUTH"){ toast(t("sessionExpired"),true); localLogout(); return; } toast(m||t("netErr"),true); }
   let busy=0;
-  function setBusy(d){ busy+=d; $("#conn").textContent=busy>0?"Đang lưu…":(ver?"Đã đồng bộ · "+fmtHM(Date.now()):""); }
+  function setBusy(d){ busy+=d; $("#conn").textContent=busy>0?t("saving"):(ver?t("synced",fmtHM(Date.now())):""); }
   async function act(fn,...args){ setBusy(1); try{ const r=await api(fn,token,...args); if(r&&r.lenh) applyData(r); return r; } finally{ setBusy(-1); } }
 
   function applyData(d){
     const wasMe=!!me;
     ver=d.ver; me=d.me; users=d.users||[]; notif=d.notif||[]; people=users.filter(u=>u.active!==false); lenh=d.lenh||[]; months=d.months||[]; sheetUrl=d.sheetUrl||"";
     combosCache=null; loaded=true;
-    if(!wasMe){ tab=has("duyet")?"duyet":has("xl")?"viec":"tong"; filter="open"; seeded=false; notifSeeded=false; loadCatalog(); }
+    if(!wasMe){ tab=has("xl")?"viec":"tong"; filter="run"; seeded=false; notifSeeded=false; loadCatalog(); }
     $("#login").hidden=true;
     for(const k in monthCache) delete monthCache[k];
     if(openId) delete logCache[openId];
     render(); checkAlerts();
-    $("#conn").textContent="Đã đồng bộ · "+fmtHM(Date.now());
+    $("#conn").textContent=t("synced",fmtHM(Date.now()));
   }
   async function poll(){ if(!token||!me||busy)return;
-    try{ const v=await api("apiVer"); if(v!==ver){ const d=await api("apiData",token); applyData(d); } else { render(); checkAlerts(); }
-      $("#conn").textContent="Đã đồng bộ · "+fmtHM(Date.now()); }
-    catch(e){ if(msgOf(e)==="AUTH") fail(e); else $("#conn").textContent="Mất kết nối, đang thử lại…"; } }
+    try{ const v=await api("apiVer"); if(v!==ver){ applyData(await api("apiData",token)); } else { render(); checkAlerts(); }
+      $("#conn").textContent=t("synced",fmtHM(Date.now())); }
+    catch(e){ if(String(e&&e.message)==="AUTH") fail(e); else $("#conn").textContent=t("retrying"); } }
   setInterval(poll,POLL_MS);
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden) poll(); });
 
-  // ---------- demo ----------
-  function demo(){ const n=Date.now(), I=(o,ct,mau,size,la,sl,done)=>({o,ct,mau,size,la,sl,done});
+  // ================= DỮ LIỆU MẪU =================
+  function demo(){ const n=Date.now(), I=(o,ct,mau,size,sl,done)=>({o,ct,mau,size,sl,done});
     return [
-      {id:"d1",demo:1,code:"TT-240926-01",ma:"NH-24518",lsx:"LSX 0912",ban:"07",ly:"Lỗi vải (lủng, sợi, dơ)",status:"dang",han:n-12*60000,ycAt:n-150*60000,ycName:"Chuyền 3",xlName:"Anh Tùng",
-       items:{a:I(1,"Thân trước","Navy","M","12",3,true),b:I(2,"Thân sau","Navy","M","12",2,true),c:I(3,"Tay áo","Navy","L","14",4,false)}},
-      {id:"d2",demo:1,code:"TT-240926-02",ma:"NH-24530",lsx:"LSX 0915",ban:"02",ly:"Khác màu / loang màu",status:"da_duyet",han:n+22*60000,ycAt:n-45*60000,ycName:"QC bán thành phẩm",xlName:"Chị Lan",
-       items:{a:I(1,"Cổ","Khaki","L","5",6,false),b:I(2,"Chân cổ","Khaki","L","5",6,false)}},
-      {id:"d3",demo:1,code:"TT-240926-03",ma:"NH-24518",lsx:"LSX 0912",ban:"07",ly:"Cắt sai / lệch canh",status:"cho_duyet",han:n+115*60000,ycAt:n-6*60000,ycName:"Chuyền 1",xlName:"",
-       items:{a:I(1,"Túi","Navy","S","3",4,false)}}
+      {id:"d1",demo:1,code:"TT-250926-01",ma:"NH-24518",lsx:"LSX 0912",ly:"Lỗi vải (lủng, sợi, dơ)",status:"dang",han:n-12*60000,ycAt:n-150*60000,ycName:"Chuyền 3",xlName:"Tocat",
+       items:{a:I(1,"Thân trước","Navy","M",3,true),b:I(2,"Thân sau","Navy","M",2,true),c:I(3,"Tay áo","Navy","L",4,false)}},
+      {id:"d2",demo:1,code:"TT-250926-02",ma:"NH-24530",lsx:"LSX 0915",ly:"Khác màu / loang màu",status:"cho_cat",han:n+22*60000,ycAt:n-45*60000,ycName:"QC",xlName:"",
+       items:{a:I(1,"Cổ","Khaki","L",6,false),b:I(2,"Chân cổ","Khaki","L",6,false)}},
+      {id:"d3",demo:1,code:"TT-250926-03",ma:"NH-24518",lsx:"LSX 0912",ly:"Cắt sai / lệch canh",status:"cho_ban_giao",han:n+115*60000,ycAt:n-60*60000,catAt:n-5*60000,ycName:"Chuyền 1",xlName:"Tocat",
+       items:{a:I(1,"Túi","Navy","S",4,true)}}
     ]; }
 
-  // ---------- render ----------
-  function tabsFor(){ const t=[["tong","Tổng quan"]];
-    if(has("duyet")) t.push(["duyet","Chờ duyệt"]);
-    if(has("xl")) t.push(["viec","Việc của tôi"]);
-    if(has("yc")) t.push(["gui","Tôi đã gửi"]);
-    t.push(["ls","Lịch sử"]);
-    if(isAdmin()) t.push(["qt","Quản trị"]);
-    return t; }
-  const myJobs=()=>lenh.filter(l=>CUT.includes(l.status));
-  const pending=()=>lenh.filter(l=>l.status==="cho_duyet");
+  // ================= HIỂN THỊ =================
+  function tabsFor(){ const tl=[["tong",t("tab_tong")]];
+    if(has("xl")) tl.push(["viec",t("tab_viec")]);
+    if(has("yc")) tl.push(["gui",t("tab_gui")]);
+    tl.push(["ls",t("tab_ls")]);
+    if(isAdmin()) tl.push(["qt",t("tab_qt")]);
+    return tl; }
+  const jobs=()=>lenh.filter(l=>CUT.includes(l.status));
 
   function render(){
     const now=Date.now(); $("#clock").textContent=fmtHM(now);
@@ -452,14 +591,12 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     $("#meBtn").innerHTML='<span class="av">'+esc(initials(me.ten))+'</span><span class="nm">'+esc(me.ten)+'</span>';
     const un=myNotif().filter(n=>n.t>seenAt()).length; $("#bellBtn").hidden=false;
     $("#bellBtn").innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>'+(un?'<span class="dot">'+un+'</span>':'');
-    $("#bellBtn").setAttribute("aria-label","Thông báo"+(un?" ("+un+" mới)":""));
-    const tl=tabsFor(); if(!tl.some(t=>t[0]===tab)) tab=tl[0][0];
-    $("#tabs").innerHTML=tl.map(([k,l])=>{ let c="";
-      if(k==="duyet"){const n=pending().length; if(n) c='<span class="cnt">'+n+'</span>';}
-      if(k==="viec"){const n=myJobs().length; if(n) c='<span class="cnt">'+n+'</span>';}
-      return '<button type="button" role="tab" data-tab="'+k+'" aria-selected="'+(k===tab)+'">'+l+c+'</button>'; }).join("");
-    $("#addBtn").hidden=!(has("yc")||has("duyet"));
-    const f={tong:vTong,duyet:vDuyet,viec:vViec,gui:vGui,ls:vLs,qt:vQt}[tab];
+    $("#bellBtn").setAttribute("aria-label",t("bellLbl")+(un?" ("+un+")":""));
+    const tl=tabsFor(); if(!tl.some(x=>x[0]===tab)) tab=tl[0][0];
+    $("#tabs").innerHTML=tl.map(([k,l])=>{ let c=""; if(k==="viec"){const n=jobs().length; if(n) c='<span class="cnt">'+n+'</span>';}
+      return '<button type="button" role="tab" data-tab="'+k+'" aria-selected="'+(k===tab)+'">'+esc(l)+c+'</button>'; }).join("");
+    $("#addBtn").hidden=!(has("yc")||has("xl"));
+    const f={tong:vTong,viec:vViec,gui:vGui,ls:vLs,qt:vQt}[tab];
     const active=document.activeElement, aid=active&&active.id, pos=active&&active.selectionStart;
     $("#main").innerHTML=f(now);
     if(aid){ const el=document.getElementById(aid); if(el&&el!==active&&el.tagName==="INPUT"){ el.focus(); try{el.setSelectionRange(pos,pos)}catch(e){} } }
@@ -467,89 +604,80 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   }
   $("#tabs").addEventListener("click",e=>{ const b=e.target.closest("[data-tab]"); if(!b)return; tab=b.dataset.tab; q=""; render(); window.scrollTo(0,0); });
 
-  const searchBox=ph=>'<div class="toolbar"><input id="q" type="search" placeholder="'+ph+'" value="'+esc(q)+'" autocomplete="off"></div>';
-  function matchQ(l){ if(!q)return true; const s=[l.code,l.ma,l.lsx,l.ban,l.ycName,l.xlName,...itemsOf(l).map(i=>i.ct+" "+i.mau+" "+i.size)].join(" ").toLowerCase(); return s.includes(q.toLowerCase()); }
+  const searchBox=ph=>'<div class="toolbar"><input id="q" type="search" placeholder="'+esc(ph)+'" value="'+esc(q)+'" autocomplete="off"></div>';
+  function matchQ(l){ if(!q)return true; const s=[l.code,l.ma,l.lsx,l.ycName,l.xlName,...itemsOf(l).map(i=>i.ct+" "+i.mau+" "+i.size)].join(" ").toLowerCase(); return s.includes(q.toLowerCase()); }
+  const listHtml=(arr,now,empty)=>'<div class="list">'+(arr.length?arr.map(l=>card(l,now)).join(""):'<div class="empty">'+empty+'</div>')+'</div>';
 
   function vTong(now){
-    const isDemo=loaded&&!lenh.length, src=isDemo?demo():lenh;
-    const open=src.filter(l=>OPEN.includes(l.status));
-    const c={late:0,cd:0,run:0,bg:0,done:0};
-    open.forEach(l=>{ if(stateOf(l,now)==="late")c.late++; if(l.status==="cho_duyet")c.cd++; else if(l.status==="cho_ban_giao")c.bg++; else c.run++; });
+    const isDemo=loaded&&!lenh.length, src=isDemo?demo():lenh, open=src.filter(l=>OPEN.includes(l.status));
+    const c={late:0,run:0,bg:0,done:0};
+    open.forEach(l=>{ if(stateOf(l,now)==="late")c.late++; if(l.status==="cho_ban_giao")c.bg++; else c.run++; });
     src.forEach(l=>{ if(l.status==="xong"&&isToday(l.xongAt))c.done++; });
-    let h='<div class="tally t5">'+
-      '<button type="button" class="late" data-f="late" aria-pressed="'+(filter==="late")+'"><span class="n">'+c.late+'</span><span class="l">Quá hạn</span></button>'+
-      '<button type="button" class="warn" data-f="cd" aria-pressed="'+(filter==="cd")+'"><span class="n">'+c.cd+'</span><span class="l">Chờ duyệt</span></button>'+
-      '<button type="button" class="acc" data-f="open" aria-pressed="'+(filter==="open")+'"><span class="n">'+c.run+'</span><span class="l">Đang thay</span></button>'+
-      '<button type="button" class="bg" data-f="bg" aria-pressed="'+(filter==="bg")+'"><span class="n">'+c.bg+'</span><span class="l">Chờ bàn giao</span></button>'+
-      '<button type="button" class="ok" data-f="done" aria-pressed="'+(filter==="done")+'"><span class="n">'+c.done+'</span><span class="l">Xong hôm nay</span></button></div>';
-    h+=searchBox("Tìm số phiếu, mã hàng, LSX, người…");
-    if(isDemo) h+='<div class="banner"><b>3 phiếu ví dụ</b> để xem cách hiển thị tiến độ. Chúng biến mất khi có yêu cầu thật đầu tiên.</div>';
-    if(!isDemo&&c.late) h+='<div class="banner late"><b>'+c.late+' phiếu quá hạn.</b> Nhắc người xử lý hoàn thành ngay.</div>';
+    const tile=(k,cls,n)=>'<button type="button" class="'+cls+'" data-f="'+k+'" aria-pressed="'+(filter===k)+'"><span class="n">'+n+'</span><span class="l">'+t("t_"+k)+'</span></button>';
+    let h='<div class="tally">'+tile("late","late",c.late)+tile("run","acc",c.run)+tile("bg","ok",c.bg)+tile("done","ok",c.done)+'</div>';
+    h+=searchBox(t("searchAll"));
+    if(isDemo) h+='<div class="banner">'+t("demoBanner")+'</div>';
+    else if(c.late) h+='<div class="banner late">'+t("lateBanner",c.late)+'</div>';
     let list;
     if(filter==="done") list=src.filter(l=>l.status==="xong"&&isToday(l.xongAt));
     else if(filter==="late") list=open.filter(l=>stateOf(l,now)==="late");
-    else if(filter==="cd") list=open.filter(l=>l.status==="cho_duyet");
     else if(filter==="bg") list=open.filter(l=>l.status==="cho_ban_giao");
     else list=open.filter(l=>CUT.includes(l.status));
     list=list.filter(matchQ).sort((a,b)=>a.han-b.han);
-    const emptyTxt={bg:"Không có phiếu chờ bàn giao.",late:"Không có phiếu quá hạn.",cd:"Không có phiếu chờ duyệt.",done:"Chưa có phiếu hoàn thành hôm nay.",open:"Không có phiếu nào đang thay."}[filter];
-    return h+'<div class="list">'+(list.length?list.map(l=>card(l,now)).join(""):'<div class="empty">'+(q?"Không có phiếu khớp “"+esc(q)+"”.":emptyTxt)+'</div>')+'</div>';
+    return h+listHtml(list,now,q?t("e_q",esc(q)):t("e_"+filter));
   }
-  function vDuyet(now){ const list=pending().filter(matchQ).sort((a,b)=>a.ycAt-b.ycAt);
-    return searchBox("Tìm trong phiếu chờ duyệt…")+'<div class="list">'+(list.length?list.map(l=>card(l,now)).join(""):'<div class="empty">Không có yêu cầu nào chờ duyệt.</div>')+'</div>'; }
-  function vViec(now){ const cut=myJobs().filter(matchQ).sort((a,b)=>a.han-b.han), bg=lenh.filter(l=>l.status==="cho_ban_giao").filter(matchQ).sort((a,b)=>a.han-b.han);
-    let h=searchBox("Tìm trong việc cần làm…");
-    h+='<div class="sec-label">Cần cắt thay</div><div class="list">'+(cut.length?cut.map(l=>card(l,now)).join(""):'<div class="empty">Không có phiếu nào cần cắt.</div>')+'</div>';
-    if(bg.length) h+='<div class="sec-label">Đã cắt xong · chờ bàn giao</div><div class="list">'+bg.map(l=>card(l,now)).join("")+'</div>';
+  function vViec(now){ const cut=jobs().filter(matchQ).sort((a,b)=>a.han-b.han), bg=lenh.filter(l=>l.status==="cho_ban_giao").filter(matchQ).sort((a,b)=>a.han-b.han);
+    let h=searchBox(t("searchWork"))+'<div class="sec-label">'+t("sec_cut")+'</div>'+listHtml(cut,now,t("e_cut"));
+    if(bg.length) h+='<div class="sec-label">'+t("sec_bg")+'</div>'+listHtml(bg,now,"");
     return h; }
   function vGui(now){ const list=lenh.filter(l=>l.ycBy===me.id).filter(matchQ).sort((a,b)=>b.ycAt-a.ycAt);
     const op=list.filter(l=>OPEN.includes(l.status)), cl=list.filter(l=>!OPEN.includes(l.status)).slice(0,40);
-    let h=searchBox("Tìm trong phiếu tôi đã gửi…");
-    h+='<div class="sec-label">Đang mở</div><div class="list">'+(op.length?op.map(l=>card(l,now)).join(""):'<div class="empty">Không có phiếu đang mở.</div>')+'</div>';
-    if(cl.length) h+='<div class="sec-label">Đã đóng gần đây</div><div class="list">'+cl.map(l=>card(l,now)).join("")+'</div>';
+    let h=searchBox(t("searchMine"))+'<div class="sec-label">'+t("sec_open")+'</div>'+listHtml(op,now,t("e_open"));
+    if(cl.length) h+='<div class="sec-label">'+t("sec_closed")+'</div>'+listHtml(cl,now,"");
     return h; }
   function vLs(now){
     const ms=months.length?months:[monthKey(now)];
     if(!lsMonth||!ms.includes(lsMonth)) lsMonth=ms[0];
-    let h='<div class="toolbar"><select id="lsMonth" aria-label="Chọn tháng">'+ms.map(m=>'<option value="'+m+'"'+(m===lsMonth?" selected":"")+'>'+monthLbl(m)+'</option>').join("")+'</select>'+
-      '<input id="q" type="search" placeholder="Tìm mã hàng, LSX…" value="'+esc(q)+'" autocomplete="off"></div>';
+    let h='<div class="toolbar"><select id="lsMonth" aria-label="'+t("pickMonth")+'">'+ms.map(m=>'<option value="'+m+'"'+(m===lsMonth?" selected":"")+'>'+monthLbl(m)+'</option>').join("")+'</select>'+
+      '<input id="q" type="search" placeholder="'+esc(t("searchLs"))+'" value="'+esc(q)+'" autocomplete="off"></div>';
     const mc=monthCache[lsMonth];
-    if(!mc){ loadMonth(lsMonth); return h+'<div class="empty">Đang tải dữ liệu '+monthLbl(lsMonth).toLowerCase()+'…</div>'; }
-    const inMonth=mc, xong=inMonth.filter(l=>l.status==="xong"), ontime=xong.filter(l=>l.xongAt<=l.han).length, qty=xong.reduce((s,l)=>s+progress(l).tot,0);
-    const stat=(n,l,col)=>'<div class="card" style="padding:8px;gap:0"><span style="font-family:var(--f-num);font-size:24px;font-weight:700;line-height:1.1'+(col?';color:'+col:'')+'">'+n+'</span><span class="sub">'+l+'</span></div>';
-    h+='<div class="tally" style="margin-top:8px">'+stat(inMonth.length,"Phiếu trong tháng")+stat(xong.length,"Hoàn thành","var(--ok)")+stat((xong.length?Math.round(ontime*100/xong.length):0)+"%","Đúng hạn")+stat(qty,"Cái đã thay")+'</div>';
-    const list=inMonth.filter(l=>CLOSED.includes(l.status)).filter(matchQ).sort((a,b)=>(b.dongAt||b.ycAt)-(a.dongAt||a.ycAt));
-    h+='<div class="list">'+(list.length?list.map(l=>card(l,now)).join(""):'<div class="empty">Chưa có phiếu đã đóng trong tháng này.</div>')+'</div>';
-    if(isAdmin()&&sheetUrl) h+='<div class="banner" style="margin-top:14px">Toàn bộ lịch sử nằm trong Google Sheet (sheet Phieu, ChiTiet, NhatKy). <a href="'+esc(sheetUrl)+'" target="_blank" rel="noopener">Mở Google Sheet</a> để lọc, làm báo cáo hoặc tải về Excel.</div>';
+    if(!mc){ loadMonth(lsMonth); return h+'<div class="empty">'+t("loadingMonth")+'</div>'; }
+    const xong=mc.filter(l=>l.status==="xong"), ontime=xong.filter(l=>l.xongAt<=l.han).length, qty=xong.reduce((s,l)=>s+progress(l).tot,0);
+    const stat=(n,l,col)=>'<div class="card stat"><span class="sn"'+(col?' style="color:'+col+'"':'')+'>'+n+'</span><span class="sub">'+l+'</span></div>';
+    h+='<div class="tally" style="margin-top:8px">'+stat(mc.length,t("s_total"))+stat(xong.length,t("s_done"),"var(--ok)")+stat((xong.length?Math.round(ontime*100/xong.length):0)+"%",t("s_ontime"))+stat(qty,t("s_qty"))+'</div>';
+    const list=mc.filter(l=>CLOSED.includes(l.status)).filter(matchQ).sort((a,b)=>(b.dongAt||b.ycAt)-(a.dongAt||a.ycAt));
+    h+=listHtml(list,now,t("e_ls"));
+    if(isAdmin()&&sheetUrl) h+='<div class="banner" style="margin-top:14px">'+t("lsBanner",esc(sheetUrl))+'</div>';
     return h; }
   async function loadMonth(k){ if(monthCache["_"+k])return; monthCache["_"+k]=1;
     try{ monthCache[k]=await api("apiMonth",token,k); }catch(e){ fail(e); monthCache[k]=[]; } delete monthCache["_"+k]; if(tab==="ls") render(); }
   function vQt(){
-    const act=users.filter(u=>u.active!==false), off=users.filter(u=>u.active===false);
-    const row=u=>'<div class="acc-row'+(u.active===false?" off":"")+'"><div style="flex:1;min-width:0"><div class="nm">'+esc(u.ten)+(u.id===me.id?' <span class="sub">(bạn)</span>':'')+'</div><div class="roles">'+(u.roles||[]).map(r=>'<span class="role">'+ROLE_LBL[r]+'</span>').join("")+(u.active===false?'<span class="role">Đã khóa</span>':'')+'</div></div><button type="button" class="btn" data-act="editAcct" data-id="'+u.id+'">Sửa</button></div>';
+    const act_=users.filter(u=>u.active!==false), off=users.filter(u=>u.active===false);
+    const roleChips=u=>(u.roles||[]).filter(r=>t("role_"+r)).map(r=>'<span class="role">'+t("role_"+r)+'</span>').join("");
+    const row=u=>'<div class="acc-row'+(u.active===false?" off":"")+'"><div style="flex:1;min-width:0"><div class="nm">'+esc(u.ten)+(u.id===me.id?' <span class="sub">'+t("you")+'</span>':'')+'</div><div class="roles">'+roleChips(u)+(u.active===false?'<span class="role">'+t("locked")+'</span>':'')+'</div></div><button type="button" class="btn" data-act="editAcct" data-id="'+u.id+'">'+t("edit")+'</button></div>';
     const nL=uniqVals(cat.map(c=>c.lsx)).length;
-    return '<div class="actions" style="margin-top:4px"><button type="button" class="btn primary" data-act="newAcct">+ Thêm tài khoản</button>'+(sheetUrl?'<a class="btn" href="'+esc(sheetUrl)+'" target="_blank" rel="noopener" style="text-decoration:none">Mở Google Sheet</a>':'')+'</div>'+
-      '<div class="sec-label">Tài khoản ('+act.length+')</div><div class="list">'+act.map(row).join("")+'</div>'+
-      (off.length?'<div class="sec-label">Đã khóa</div><div class="list">'+off.map(row).join("")+'</div>':'')+
-      '<div class="sec-label">Danh mục LSX · màu · cỡ</div><div class="box"><div class="fhint">Hiện có <b>'+nL+'</b> LSX, '+cat.length+' dòng. Để cập nhật, mở Google Sheet, vào sheet <b>DanhMuc</b> và dán dữ liệu vào 4 cột Mã hàng, LSX, Màu, Cỡ (mỗi dòng một tổ hợp), rồi bấm nút dưới đây.</div><div><button type="button" class="btn" data-act="reloadCat">Tải lại danh mục</button></div></div>'+
-      '<div class="banner" style="margin-top:14px">Mỗi người đăng nhập bằng tên + mã PIN. Máy đã đăng nhập sẽ nhớ người dùng trong '+60+' ngày; bấm vào tên ở góc trên để đổi người.</div>'; }
+    return '<div class="actions" style="margin-top:4px"><button type="button" class="btn primary" data-act="newAcct">'+t("addAcc")+'</button>'+(sheetUrl?'<a class="btn" href="'+esc(sheetUrl)+'" target="_blank" rel="noopener" style="text-decoration:none">'+t("openSheet")+'</a>':'')+'</div>'+
+      '<div class="sec-label">'+t("accounts",act_.length)+'</div><div class="list">'+act_.map(row).join("")+'</div>'+
+      (off.length?'<div class="sec-label">'+t("locked")+'</div><div class="list">'+off.map(row).join("")+'</div>':'')+
+      '<div class="sec-label">'+t("catTitle")+'</div><div class="box"><div class="fhint">'+t("catInfo",nL,cat.length)+'</div><div><button type="button" class="btn" data-act="reloadCat">'+t("reloadCat")+'</button></div></div>'+
+      '<div class="banner" style="margin-top:14px">'+t("loginNote")+'</div>'; }
 
   function card(l,now){
     const s=stateOf(l,now), p=progress(l), closed=s==="closed";
     let dueT,dueS;
-    if(l.status==="xong"){ dueT="✓ "+fmtHM(l.xongAt); dueS=(l.xongAt>l.han?"trễ "+fmtDur((l.xongAt-l.han)/60000):"đúng hạn")+" · "+fmtDay(l.xongAt); }
-    else if(closed){ dueT=ST_LBL[l.status]; dueS=fmtDT(l.dongAt||l.ycAt); }
-    else if(s==="late"){ dueT="Trễ "+fmtDur((l.han-now)/60000); dueS="hạn "+fmtDT(l.han); }
-    else { dueT="Còn "+fmtDur((l.han-now)/60000); dueS="hạn "+fmtDT(l.han); }
-    const pills=['<span class="pill '+ST_CLS[l.status]+'">'+ST_LBL[l.status]+'</span>'];
-    if(s==="late") pills.push('<span class="pill p-late">Quá hạn</span>'); else if(s==="warn") pills.push('<span class="pill p-warn">Sắp hết giờ</span>');
-    const who=['Yêu cầu: <b>'+esc(l.ycName)+'</b>', l.xlName?'Cắt: <b>'+esc(l.xlName)+'</b>':""].filter(Boolean).join(" · ");
-    const prog=["cho_duyet","tu_choi","huy"].includes(l.status)
-      ? '<div class="sub">'+p.n+' chi tiết · '+p.tot+' cái</div>'
-      : '<div class="prog"><div class="lbl"><span>Đã thay <b>'+p.done+'/'+p.tot+'</b> cái · '+p.nd+'/'+p.n+' chi tiết</span><b>'+p.pct+'%</b></div><div class="bar'+(p.pct===100?" full":"")+'"><i style="width:'+p.pct+'%"></i></div></div>';
+    if(l.status==="xong"){ dueT="✓ "+fmtHM(l.xongAt); dueS=(l.xongAt>l.han?t("lateShort",fmtDur((l.xongAt-l.han)/60000)):t("onTime"))+" · "+fmtDay(l.xongAt); }
+    else if(closed){ dueT=stLbl(l.status); dueS=fmtDT(l.dongAt||l.ycAt); }
+    else if(s==="late"){ dueT=t("lateBy",fmtDur((l.han-now)/60000)); dueS=t("due",fmtDT(l.han)); }
+    else { dueT=t("left",fmtDur((l.han-now)/60000)); dueS=t("due",fmtDT(l.han)); }
+    const pills=['<span class="pill '+ST_CLS[l.status]+'">'+stLbl(l.status)+'</span>'];
+    if(s==="late") pills.push('<span class="pill p-late">'+t("p_late")+'</span>'); else if(s==="warn") pills.push('<span class="pill p-warn">'+t("p_warn")+'</span>');
+    const who=[t("who_yc")+': <b>'+esc(l.ycName)+'</b>', l.xlName?t("who_cut")+': <b>'+esc(l.xlName)+'</b>':""].filter(Boolean).join(" · ");
+    const prog=["tu_choi","huy"].includes(l.status)
+      ? '<div class="sub">'+t("partsCount",p.n,p.tot)+'</div>'
+      : '<div class="prog"><div class="lbl"><span>'+t("progress",p.done,p.tot,p.nd,p.n)+(p.short?'<b class="shortc">'+t("shortTotal",p.short)+'</b>':'')+'</span><b>'+p.pct+'%</b></div><div class="bar'+(p.nd===p.n&&p.n?" full":"")+'"><i style="width:'+p.pct+'%"></i></div></div>';
     const tag=l.demo?"div":"button";
     return '<'+tag+(l.demo?'':' type="button" data-open="'+l.id+'"')+' class="card is-'+s+(closed?" closed":"")+(l.demo?" demo":"")+'">'+
-      '<div class="row1"><div><div class="code">'+esc(l.code||"")+(l.demo?" · VÍ DỤ":"")+'</div><div class="ma">'+esc(l.ma)+'</div><div class="sub">'+[l.lsx,l.ban?"Bàn "+l.ban:"",l.ly].filter(Boolean).map(esc).join(" · ")+'</div></div>'+
+      '<div class="row1"><div><div class="code">'+esc(l.code||"")+(l.demo?" · "+t("example"):"")+'</div><div class="ma">'+esc(l.ma)+'</div><div class="sub">'+[l.lsx,l.ly].filter(Boolean).map(esc).join(" · ")+'</div></div>'+
       '<div class="due"><div class="t">'+dueT+'</div><div class="s">'+dueS+'</div></div></div>'+
       prog+'<div class="meta">'+pills.join("")+'</div><div class="who">'+who+'</div></'+tag+'>';
   }
@@ -560,97 +688,103 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     const b=e.target.closest("[data-act]"); if(!b)return; const a=b.dataset.act;
     if(a==="newAcct") openAcct(null);
     if(a==="editAcct") openAcct(users.find(u=>u.id===b.dataset.id));
-    if(a==="reloadCat"){ b.disabled=true; await loadCatalog(); toast("Đã tải lại danh mục: "+cat.length+" dòng"); render(); }
+    if(a==="reloadCat"){ b.disabled=true; await loadCatalog(); toast(t("catReloaded",cat.length)); render(); }
   });
   $("#main").addEventListener("input",e=>{ if(e.target.id==="q"){ q=e.target.value; render(); } });
   $("#main").addEventListener("change",e=>{ if(e.target.id==="lsMonth"){ lsMonth=e.target.value; render(); } });
 
-  // ---------- chi tiết phiếu ----------
+  // ================= CHI TIẾT PHIẾU =================
   function findL(id){ return lenh.find(x=>x.id===id) || Object.values(monthCache).flat().find(x=>x&&x.id===id); }
   function openDetail(id){ openId=id; unlockAudio(); $("#detail").hidden=false; renderDetail(); }
   async function loadLog(id){ if(logCache[id]) return; logCache[id]="loading";
     try{ logCache[id]=await api("apiLog",token,id); }catch(e){ logCache[id]=[]; } if(openId===id) renderDetail(); }
+  const ACT_BY_LABEL={"Tạo yêu cầu":"tao","Sửa yêu cầu":"sua","Duyệt":"duyet","Từ chối":"tuchoi","Nhận việc":"nhan","Đã thay":"tick","Bỏ tick":"botick","Hoàn thành toàn bộ":"xong","Hủy phiếu":"huy","Giao việc":"giao","Đổi hạn":"doihan","Đã cắt xong – chờ bàn giao":"catxong","Đã bàn giao cho người yêu cầu":"bangiao"};
   function renderDetail(){
     const l=findL(openId); if(!l){ closeDetail(); return; }
     const now=Date.now(), s=stateOf(l,now), p=progress(l), its=itemsOf(l);
-    const canTick=WORK.includes(l.status)&&(has("duyet")||has("xl"));
-    let h='<div class="hd"><div><div class="code">'+esc(l.code||"")+'</div><h2>'+esc(l.ma)+(l.lsx?' · '+esc(l.lsx):'')+'</h2></div><button type="button" class="btn ghost" data-act="close">Đóng</button></div>';
-    h+='<div class="meta"><span class="pill '+ST_CLS[l.status]+'">'+ST_LBL[l.status]+'</span>'+(s==="late"?'<span class="pill p-late">Trễ '+fmtDur((l.han-now)/60000)+'</span>':s==="warn"?'<span class="pill p-warn">Còn '+fmtDur((l.han-now)/60000)+'</span>':'')+'</div>';
-    h+='<dl class="kv"><dt>Hạn</dt><dd>'+fmtFull(l.han)+'</dd><dt>Người yêu cầu</dt><dd>'+esc(l.ycName)+' · '+fmtDT(l.ycAt)+'</dd>'+
-      (l.duyetName?'<dt>Người duyệt</dt><dd>'+esc(l.duyetName)+' · '+fmtDT(l.duyetAt)+'</dd>':'')+
-      (l.xlName?'<dt>Người cắt</dt><dd>'+esc(l.xlName)+'</dd>':'')+(l.catAt?'<dt>Cắt xong</dt><dd>'+fmtDT(l.catAt)+'</dd>':'')+(l.xongAt?'<dt>Bàn giao</dt><dd>'+fmtDT(l.xongAt)+'</dd>':'')+
-      (l.ban?'<dt>Bàn cắt</dt><dd>'+esc(l.ban)+'</dd>':'')+'<dt>Lý do</dt><dd>'+esc(l.ly||"")+'</dd>'+
-      (l.note?'<dt>Ghi chú</dt><dd>'+esc(l.note)+'</dd>':'')+(l.lyDoTC?'<dt>'+(l.status==="huy"?"Lý do hủy":"Lý do từ chối")+'</dt><dd>'+esc(l.lyDoTC)+'</dd>':'')+'</dl>';
-    if(!["cho_duyet","tu_choi","huy"].includes(l.status))
-      h+='<div class="prog"><div class="lbl"><span>Đã thay <b>'+p.done+'/'+p.tot+'</b> cái · '+p.nd+'/'+p.n+' chi tiết</span><b>'+p.pct+'%</b></div><div class="bar'+(p.pct===100?" full":"")+'"><i style="width:'+p.pct+'%"></i></div></div>';
-    h+='<div class="check">'+its.map(i=>'<label class="ci'+(i.done?" done":"")+'">'+
+    const canTick=OPEN.includes(l.status)&&has("xl");
+    let h='<div class="hd"><div><div class="code">'+esc(l.code||"")+'</div><h2>'+esc(l.ma)+(l.lsx?' · '+esc(l.lsx):'')+'</h2></div><button type="button" class="btn ghost" data-act="close">'+t("close")+'</button></div>';
+    h+='<div class="meta"><span class="pill '+ST_CLS[l.status]+'">'+stLbl(l.status)+'</span>'+(s==="late"?'<span class="pill p-late">'+t("lateBy",fmtDur((l.han-now)/60000))+'</span>':s==="warn"?'<span class="pill p-warn">'+t("left",fmtDur((l.han-now)/60000))+'</span>':'')+'</div>';
+    h+='<dl class="kv"><dt>'+t("k_due")+'</dt><dd>'+fmtFull(l.han)+'</dd><dt>'+t("k_req")+'</dt><dd>'+esc(l.ycName)+' · '+fmtDT(l.ycAt)+'</dd>'+
+      (l.xlName?'<dt>'+t("k_cutter")+'</dt><dd>'+esc(l.xlName)+'</dd>':'')+(l.catAt?'<dt>'+t("k_cutDone")+'</dt><dd>'+fmtDT(l.catAt)+'</dd>':'')+(l.xongAt?'<dt>'+t("k_handed")+'</dt><dd>'+fmtDT(l.xongAt)+'</dd>':'')+
+      '<dt>'+t("k_reason")+'</dt><dd>'+esc(l.ly||"")+'</dd>'+
+      (l.note?'<dt>'+t("k_note")+'</dt><dd>'+esc(l.note)+'</dd>':'')+(l.lyDoTC?'<dt>'+t(l.status==="huy"?"k_cancelReason":"k_rejReason")+'</dt><dd>'+esc(l.lyDoTC)+'</dd>':'')+'</dl>';
+    if(!["tu_choi","huy"].includes(l.status))
+      h+='<div class="prog"><div class="lbl"><span>'+t("progress",p.done,p.tot,p.nd,p.n)+(p.short?'<b class="shortc">'+t("shortTotal",p.short)+'</b>':'')+'</span><b>'+p.pct+'%</b></div><div class="bar'+(p.nd===p.n&&p.n?" full":"")+'"><i style="width:'+p.pct+'%"></i></div></div>';
+    h+='<div class="check">'+its.map(i=>{ const sh=i.done&&dq(i)<i.sl;
+      return '<div class="ciw"><label class="ci'+(i.done?(sh?" done short":" done"):"")+'">'+
       '<input type="checkbox" data-tick="'+i.id+'"'+(i.done?" checked":"")+(canTick&&!i.pending?"":" disabled")+'>'+
-      '<span class="tx"><b>'+esc(i.ct)+'</b><span class="sub">'+[i.mau&&"Màu "+i.mau,i.size&&"Cỡ "+i.size,i.la&&"Lá "+i.la].filter(Boolean).map(esc).join(" · ")+
-      (i.done&&i.doneName?' · ✓ '+esc(i.doneName)+' '+fmtHM(i.doneAt):'')+(i.pending?' · đang lưu…':'')+'</span></span><span class="q">×'+esc(i.sl)+'</span></label>').join("")+'</div>';
-    if(canTick&&l.status!=="cho_ban_giao") h+='<div class="fhint">Tick từng chi tiết khi đã cắt thay xong. Khi đủ tất cả, phiếu chuyển sang “Chờ bàn giao”.</div>';
-    if(l.status==="cho_ban_giao"){ const can=has("xl")||has("duyet")||l.ycBy===me.id;
-      h+='<div class="box hand"><h3>Bàn giao cho '+esc(l.ycName)+'</h3><div class="fhint">Đã cắt xong lúc '+fmtDT(l.catAt)+'. Phiếu chỉ hoàn thành khi xác nhận đã giao chi tiết cho người yêu cầu.</div>'+
-        (can?'<div class="actions"><button type="button" class="btn good" data-act="handover">Xác nhận đã bàn giao</button></div>':'')+'</div>'; }
-    if(l.status==="cho_duyet"&&has("duyet")){
-      h+='<div class="box"><h3>Duyệt yêu cầu</h3>'+
-
-        '<div class="fld"><label for="d-han">Hạn hoàn thành</label><input id="d-han" type="datetime-local" value="'+toLocalInput(l.han)+'"></div>'+
-        '<div class="actions"><button type="button" class="btn good" data-act="approve">Duyệt</button><button type="button" class="btn danger" data-act="rejectAsk">Từ chối</button></div><div id="rejWrap"></div></div>';
-    }
-    if(CUT.includes(l.status)&&has("duyet")){
-      h+='<div class="box"><h3>Đổi hạn</h3><div class="fld"><label for="g-han">Hạn mới</label><input id="g-han" type="datetime-local" value="'+toLocalInput(l.han)+'"></div>'+
-        '<div class="actions"><button type="button" class="btn" data-act="adjust">Lưu hạn mới</button></div></div>';
-    }
-    const canEdit=l.status==="cho_duyet"&&(l.ycBy===me.id||has("duyet"));
-    const canCancel=(l.status==="cho_duyet"&&l.ycBy===me.id)||(OPEN.includes(l.status)&&has("duyet"));
-    if(canEdit||canCancel) h+='<div class="actions">'+(canEdit?'<button type="button" class="btn" data-act="edit">Sửa yêu cầu</button>':'')+'<span class="spacer"></span>'+(canCancel?'<button type="button" class="btn danger" data-act="cancelAsk">Hủy phiếu</button>':'')+'</div><div id="cancelWrap"></div>';
+      '<span class="tx"><b>'+esc(i.ct)+'</b><span class="sub">'+[i.mau&&t("color")+" "+i.mau,i.size&&t("size")+" "+i.size].filter(Boolean).map(esc).join(" · ")+
+      (i.done&&i.doneName?' · ✓ '+esc(i.doneName)+' '+fmtHM(i.doneAt):'')+(i.pending?' · '+t("saving"):'')+'</span>'+
+      (sh?'<span class="shortl">'+t("made",dq(i),i.sl)+' · '+t("shortBy",i.sl-dq(i))+(i.shortNote?' – '+esc(i.shortNote):'')+'</span>':'')+
+      '</span><span class="q">'+(sh?dq(i)+'/':'×')+esc(i.sl)+'</span></label>'+
+      (canTick&&!i.pending?'<button type="button" class="btn ghost qbtn" data-act="qtyAsk" data-iid="'+i.id+'">'+t("editQty")+'</button>':'')+
+      '<div class="qedit" id="qe-'+i.id+'"></div></div>'; }).join("")+'</div>';
+    if(canTick&&l.status!=="cho_ban_giao") h+='<div class="fhint">'+t("tickHint")+' '+t("qtyHint")+'</div>';
+    if(l.status==="cho_ban_giao"){ const can=has("xl")||l.ycBy===me.id;
+      h+='<div class="box hand"><h3>'+t("handTitle",esc(l.ycName))+'</h3><div class="fhint">'+t("handHint",fmtDT(l.catAt))+'</div>'+
+        (can?'<div class="actions"><button type="button" class="btn good" data-act="handover">'+t("handBtn")+'</button></div>':'')+'</div>'; }
+    if(CUT.includes(l.status)&&isAdmin()){
+      h+='<div class="box"><h3>'+t("changeDue")+'</h3><div class="fld"><label for="g-han">'+t("newDue")+'</label><input id="g-han" type="datetime-local" value="'+toLocalInput(l.han)+'"></div>'+
+        '<div class="actions"><button type="button" class="btn" data-act="adjust">'+t("saveDue")+'</button></div></div>'; }
+    const fresh=NOT_STARTED.includes(l.status)&&!started(l);
+    const canEdit=fresh&&(l.ycBy===me.id||isAdmin());
+    const canCancel=(fresh&&l.ycBy===me.id)||(OPEN.includes(l.status)&&has("xl"));
+    if(canEdit||canCancel) h+='<div class="actions">'+(canEdit?'<button type="button" class="btn" data-act="edit">'+t("editReq")+'</button>':'')+'<span class="spacer"></span>'+(canCancel?'<button type="button" class="btn danger" data-act="cancelAsk">'+t("cancelReq")+'</button>':'')+'</div><div id="cancelWrap"></div>';
     const lg=logCache[l.id];
     if(!lg) loadLog(l.id);
-    h+='<div><div class="sec-label" style="margin:0 0 6px">Lịch sử phiếu</div>'+(Array.isArray(lg)?'<div class="tl">'+lg.slice().sort((a,b)=>a.t-b.t).map(g=>'<div><time>'+fmtHM(g.t)+' '+fmtDay(g.t)+'</time><b>'+esc(g.name)+'</b>: '+esc(g.a)+(g.n?' – '+esc(g.n):'')+'</div>').join("")+'</div>':'<div class="fhint">Đang tải…</div>')+'</div>';
+    const logLine=g=>{ const code=ACT_BY_LABEL[g.a]; return '<div><time>'+fmtHM(g.t)+' '+fmtDay(g.t)+'</time><b>'+esc(g.name)+'</b>: '+esc(code?t("a_"+code):g.a)+(g.n?' – '+esc(g.n):'')+'</div>'; };
+    h+='<div><div class="sec-label" style="margin:0 0 6px">'+t("history")+'</div>'+(Array.isArray(lg)?'<div class="tl">'+lg.slice().sort((a,b)=>a.t-b.t).map(logLine).join("")+'</div>':'<div class="fhint">'+t("loading")+'</div>')+'</div>';
     const body=$("#detailBody"), st=body.scrollTop;
-    const keep={}; ["d-han","g-han","rej-ly","cancel-ly"].forEach(id=>{const el=document.getElementById(id); if(el) keep[id]=el.value;});
-    const rej=$("#rejWrap")?$("#rejWrap").innerHTML:"", can=$("#cancelWrap")?$("#cancelWrap").innerHTML:"";
+    const keep={}; ["g-han","cancel-ly"].forEach(id=>{const el=document.getElementById(id); if(el) keep[id]=el.value;});
+    const can=$("#cancelWrap")?$("#cancelWrap").innerHTML:"";
+    const qeOpen={}; document.querySelectorAll("#detailBody .qedit").forEach(el=>{ if(el.innerHTML){ qeOpen[el.id]={html:el.innerHTML,v:(el.querySelector("input[type=number]")||{}).value,n:(el.querySelector("input[type=text]")||{}).value}; } });
     body.innerHTML=h;
-    if(rej&&$("#rejWrap")) $("#rejWrap").innerHTML=rej; if(can&&$("#cancelWrap")) $("#cancelWrap").innerHTML=can;
+    if(can&&$("#cancelWrap")) $("#cancelWrap").innerHTML=can;
+    for(const id in qeOpen){ const el=document.getElementById(id); if(el){ el.innerHTML=qeOpen[id].html; const a=el.querySelector("input[type=number]"), b=el.querySelector("input[type=text]"); if(a) a.value=qeOpen[id].v; if(b) b.value=qeOpen[id].n; } }
     for(const id in keep){ const el=document.getElementById(id); if(el) el.value=keep[id]; }
     body.scrollTop=st;
   }
   function closeDetail(){ openId=null; $("#detail").hidden=true; }
   $("#detail").addEventListener("click",e=>{ if(e.target.id==="detail") closeDetail(); });
   $("#detailBody").addEventListener("change",async e=>{
-    const t=e.target.closest("[data-tick]"); if(!t)return;
-    const l=findL(openId); if(!l)return; const iid=t.dataset.tick, on=t.checked, it=l.items[iid];
-    it.done=on; it.pending=true; if(on){ it.doneName=me.ten; it.doneAt=Date.now(); } render();
-    try{ const r=await act("apiTick",l.id,iid,on); if(r&&r.cutDone) toast("Đã cắt xong "+l.code+" – bàn giao cho "+l.ycName); }
+    const tk=e.target.closest("[data-tick]"); if(!tk)return;
+    const l=findL(openId); if(!l)return; const iid=tk.dataset.tick, on=tk.checked, it=l.items[iid];
+    it.done=on; it.doneQty=null; it.shortNote=""; it.pending=true; if(on){ it.doneName=me.ten; it.doneAt=Date.now(); } render();
+    try{ const r=await act("apiTick",l.id,iid,on); if(r&&r.cutDone) toast(t("cutDoneToast",l.code,l.ycName)); }
     catch(err){ it.done=!on; fail(err); }
     finally{ delete it.pending; render(); }
   });
   $("#detailBody").addEventListener("click",async e=>{
+    const qs=e.target.closest("[data-qstep]"); if(qs){ const inp=qs.parentNode.querySelector("input"); inp.value=Math.max(0,Math.min(Number(qs.dataset.max),(parseInt(inp.value,10)||0)+Number(qs.dataset.qstep))); return; }
     const b=e.target.closest("[data-act]"); if(!b)return; const a=b.dataset.act;
     if(a==="close") return closeDetail();
     const l=findL(openId); if(!l)return;
     const run=async(fn,args,msg)=>{ b.disabled=true; try{ await act(fn,...args); if(msg) toast(msg); }catch(err){ fail(err); b.disabled=false; } };
-    const hanOf=(id)=>{ const v=$("#"+id).value; return (v&&v!==toLocalInput(l.han))?new Date(v).getTime():l.han; };
-    if(a==="approve") return run("apiApprove",[l.id,"",hanOf("d-han")],"Đã duyệt "+l.code);
-    if(a==="handover") return run("apiHandover",[l.id],"Hoàn thành "+l.code+" – đã bàn giao");
-    if(a==="rejectAsk"){ $("#rejWrap").innerHTML='<div class="confirm"><div class="fld"><label for="rej-ly">Lý do từ chối</label><input id="rej-ly" autocomplete="off"></div><div class="actions"><button type="button" class="btn" data-act="rejectNo">Thôi</button><button type="button" class="btn danger" data-act="rejectYes">Từ chối</button></div></div>'; $("#rej-ly").focus(); return; }
-    if(a==="rejectNo"){ $("#rejWrap").innerHTML=""; return; }
-    if(a==="rejectYes") return run("apiReject",[l.id,$("#rej-ly").value.trim()],"Đã từ chối "+l.code);
-    if(a==="adjust") return run("apiAdjust",[l.id,"",hanOf("g-han")],"Đã lưu hạn mới");
+    if(a==="handover") return run("apiHandover",[l.id],t("handDone",l.code));
+    if(a==="qtyAsk"){ const i=l.items[b.dataset.iid], box=$("#qe-"+b.dataset.iid); if(box.innerHTML){ box.innerHTML=""; return; }
+      const cur=i.done?dq(i):i.sl;
+      box.innerHTML='<div class="qbox"><div class="fld"><span class="flabel">'+t("madeQty")+' (≤ '+i.sl+')</span><div class="stepper"><button type="button" data-qstep="-1" data-max="'+i.sl+'">−</button><input type="number" min="0" max="'+i.sl+'" inputmode="numeric" value="'+cur+'"><button type="button" data-qstep="1" data-max="'+i.sl+'">+</button></div></div>'+
+        '<div class="fld"><label>'+t("shortReason")+'</label><input type="text" placeholder="'+esc(t("shortPh"))+'" value="'+esc(i.shortNote||"")+'" autocomplete="off"></div>'+
+        '<div class="actions"><button type="button" class="btn" data-act="qtyNo" data-iid="'+b.dataset.iid+'">'+t("no")+'</button><button type="button" class="btn primary" data-act="qtySave" data-iid="'+b.dataset.iid+'">'+t("save")+'</button></div></div>'; return; }
+    if(a==="qtyNo"){ $("#qe-"+b.dataset.iid).innerHTML=""; return; }
+    if(a==="qtySave"){ const iid=b.dataset.iid, box=$("#qe-"+iid), i=l.items[iid];
+      const q=Math.max(0,Math.min(i.sl,parseInt(box.querySelector("input[type=number]").value,10)||0)), note=box.querySelector("input[type=text]").value.trim();
+      b.disabled=true; i.done=true; i.doneQty=q; i.shortNote=q<i.sl?note:""; i.pending=true; box.innerHTML=""; render();
+      try{ const r=await act("apiTick",l.id,iid,true,q,note); toast(r&&r.cutDone?t("cutDoneToast",l.code,l.ycName):t("qtySaved")); }
+      catch(err){ fail(err); } finally{ delete i.pending; render(); } return; }
+    if(a==="adjust"){ const v=$("#g-han").value; const han=(v&&v!==toLocalInput(l.han))?new Date(v).getTime():l.han; return run("apiAdjust",[l.id,"",han],t("dueSaved")); }
     if(a==="edit"){ closeDetail(); openForm(l); return; }
-    if(a==="cancelAsk"){ $("#cancelWrap").innerHTML='<div class="confirm"><div class="fld"><label for="cancel-ly">Lý do hủy</label><input id="cancel-ly" autocomplete="off"></div><div class="actions"><button type="button" class="btn" data-act="cancelNo">Thôi</button><button type="button" class="btn danger" data-act="cancelYes">Hủy phiếu</button></div></div>'; return; }
+    if(a==="cancelAsk"){ $("#cancelWrap").innerHTML='<div class="confirm"><div class="fld"><label for="cancel-ly">'+t("cancelReason")+'</label><input id="cancel-ly" autocomplete="off"></div><div class="actions"><button type="button" class="btn" data-act="cancelNo">'+t("no")+'</button><button type="button" class="btn danger" data-act="cancelYes">'+t("cancelReq")+'</button></div></div>'; return; }
     if(a==="cancelNo"){ $("#cancelWrap").innerHTML=""; return; }
-    if(a==="cancelYes") return run("apiCancel",[l.id,$("#cancel-ly").value.trim()],"Đã hủy phiếu "+l.code);
+    if(a==="cancelYes") return run("apiCancel",[l.id,$("#cancel-ly").value.trim()],t("canceled",l.code));
   });
 
-  // ---------- form tạo / sửa ----------
+  // ================= FORM YÊU CẦU =================
   let lines=[];
-  const newLine=()=>({id:"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),ct:"",mau:"",size:"",la:"",sl:""});
-  function computeDue(){ if(dueSel==="custom"){const v=$("#i-han").value;return v?new Date(v).getTime():NaN} if(dueSel==="eod")return eodMs(); return Date.now()+Number(dueSel)*60000; }
-  function updateDueHint(){ const ms=computeDue(); $("#dueHint").textContent=isNaN(ms)?"Chọn giờ hạn.":"Hạn: "+fmtHM(ms)+" "+fmtDay(ms)+(ms<Date.now()?" (đã qua giờ này)":"");
-    document.querySelectorAll("#dueChips .chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.m===dueSel))); }
-  $("#dueChips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;dueSel=b.dataset.m;$("#i-han").value=toLocalInput(computeDue());updateDueHint();});
-  $("#i-han").addEventListener("input",()=>{dueSel="custom";updateDueHint();});
+  const newLine=()=>({id:"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),ct:"",mau:"",size:"",sl:1});
+  function renderDue(){ const ms=editingId?(findL(editingId)||{}).han:dueFor(Date.now());
+    $("#dueBox").innerHTML='<div class="duet">'+t("dueIs",ms?fmtHM(ms)+" "+fmtDay(ms)+" ("+fmtFull(ms).slice(0,10)+")":"")+'</div><div class="fhint">'+t("dueRule")+'</div>'; }
   function chipRow(vals,cur,key,i){
     if(!vals.length) return "";
     return '<div class="opts">'+vals.map(v=>'<button type="button" class="chip" data-i="'+i+'" data-k="'+key+'" data-v="'+esc(v)+'" aria-pressed="'+(norm(v)===norm(cur))+'">'+esc(v)+'</button>').join("")+'</div>';
@@ -661,50 +795,53 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     const byColor=ln.mau&&colors.some(c=>norm(c)===norm(ln.mau))?pool.filter(c=>norm(c.mau)===norm(ln.mau)):pool;
     return {colors,sizes:sortSizes(uniqVals(byColor.map(c=>c.size)))};
   }
+  function sizeBlock(ln,o,i){ return o.sizes.length?chipRow(o.sizes,ln.size,"size",i):'<div class="fhint">'+t("noSizes")+'</div>'; }
   function renderLines(){
     linesSig=knownMa()+"|"+knownLsx();
     $("#lines").innerHTML=lines.map((ln,i)=>{ const o=lineOpts(ln);
       return '<div class="line">'+
-        '<div class="fld c-ct"><label for="ln-ct-'+i+'">Chi tiết</label><input list="dl-ct" data-i="'+i+'" data-k="ct" id="ln-ct-'+i+'" value="'+esc(ln.ct)+'" placeholder="Chọn hoặc gõ…" autocomplete="off"></div>'+
-        '<div class="fld c-sl"><label for="ln-sl-'+i+'">Số lượng</label><input type="number" min="1" inputmode="numeric" data-i="'+i+'" data-k="sl" id="ln-sl-'+i+'" value="'+esc(ln.sl)+'"></div>'+
-        '<div class="fld c-full"><label for="ln-mau-'+i+'">Màu</label><input data-i="'+i+'" data-k="mau" id="ln-mau-'+i+'" value="'+esc(ln.mau)+'" autocomplete="off" placeholder="'+(o.colors.length?"Bấm chọn bên dưới hoặc gõ":"Gõ màu")+'">'+chipRow(o.colors,ln.mau,"mau",i)+'</div>'+
-        '<div class="fld c-full"><label for="ln-size-'+i+'">Cỡ</label><input data-i="'+i+'" data-k="size" id="ln-size-'+i+'" value="'+esc(ln.size)+'" autocomplete="off" placeholder="'+(o.sizes.length?"Bấm chọn bên dưới hoặc gõ":"Gõ cỡ")+'">'+chipRow(o.sizes,ln.size,"size",i)+'</div>'+
-        '<div class="fld c-la"><label for="ln-la-'+i+'">Số lá / bó</label><input data-i="'+i+'" data-k="la" id="ln-la-'+i+'" value="'+esc(ln.la)+'" autocomplete="off"></div>'+
-        (lines.length>1?'<button type="button" class="btn ghost rm" data-rm="'+i+'">Bỏ dòng này</button>':'')+'</div>';
+        '<div class="fld c-ct"><label for="ln-ct-'+i+'">'+t("part")+'</label><input list="dl-ct" data-i="'+i+'" data-k="ct" id="ln-ct-'+i+'" value="'+esc(ln.ct)+'" placeholder="'+esc(t("pickOrType"))+'" autocomplete="off"></div>'+
+        '<div class="fld c-sl"><label for="ln-sl-'+i+'">'+t("qty")+'</label><div class="stepper"><button type="button" data-step="-1" data-i="'+i+'" aria-label="−">−</button><input type="number" min="1" inputmode="numeric" data-i="'+i+'" data-k="sl" id="ln-sl-'+i+'" value="'+esc(ln.sl)+'"><button type="button" data-step="1" data-i="'+i+'" aria-label="+">+</button></div></div>'+
+        '<div class="fld c-full"><label for="ln-mau-'+i+'">'+t("color")+'</label><input data-i="'+i+'" data-k="mau" id="ln-mau-'+i+'" value="'+esc(ln.mau)+'" autocomplete="off" placeholder="'+esc(o.colors.length?t("colorPh"):t("colorPh2"))+'">'+chipRow(o.colors,ln.mau,"mau",i)+'</div>'+
+        '<div class="fld c-full sizef"><span class="flabel">'+t("size")+(ln.size?': <b class="selv">'+esc(ln.size)+'</b>':'')+'</span>'+sizeBlock(ln,o,i)+'</div>'+
+        (lines.length>1?'<button type="button" class="btn ghost rm" data-rm="'+i+'">'+t("removeLine")+'</button>':'')+'</div>';
     }).join("");
   }
   function refreshChips(i){ const ln=lines[i], o=lineOpts(ln), el=$("#lines").children[i]; if(!el) return;
-    const [m,z]=el.querySelectorAll(".c-full");
-    const set=(box,vals,cur,key)=>{ const old=box.querySelector(".opts"); if(old) old.remove(); box.insertAdjacentHTML("beforeend",chipRow(vals,cur,key,i)); };
-    set(m,o.colors,ln.mau,"mau"); set(z,o.sizes,ln.size,"size"); }
-  $("#lines").addEventListener("input",e=>{ const el=e.target; if(el.dataset.i==null)return; const i=+el.dataset.i; lines[i][el.dataset.k]=el.value; if(el.dataset.k==="mau"||el.dataset.k==="size") refreshChips(i); });
+    const m=el.querySelector(".c-full"), z=el.querySelector(".sizef");
+    const old=m.querySelector(".opts"); if(old) old.remove(); m.insertAdjacentHTML("beforeend",chipRow(o.colors,ln.mau,"mau",i));
+    if(ln.size&&o.sizes.length&&!o.sizes.some(x=>norm(x)===norm(ln.size))) ln.size="";
+    z.innerHTML='<span class="flabel">'+t("size")+(ln.size?': <b class="selv">'+esc(ln.size)+'</b>':'')+'</span>'+sizeBlock(ln,o,i); }
+  $("#lines").addEventListener("input",e=>{ const el=e.target; if(el.dataset.i==null||!el.dataset.k)return; const i=+el.dataset.i;
+    lines[i][el.dataset.k]=el.dataset.k==="sl"?el.value:el.value; if(el.dataset.k==="mau") refreshChips(i); });
   $("#lines").addEventListener("click",e=>{
+    const st=e.target.closest("[data-step]"); if(st){ const i=+st.dataset.i, ln=lines[i]; ln.sl=Math.max(1,(parseInt(ln.sl,10)||0)+Number(st.dataset.step)); $("#ln-sl-"+i).value=ln.sl; return; }
     const c=e.target.closest(".chip[data-k]"); if(c){ const i=+c.dataset.i, k=c.dataset.k, ln=lines[i];
-      ln[k]=norm(ln[k])===norm(c.dataset.v)?"":c.dataset.v; if(k==="mau"){ const o=lineOpts(ln); if(ln.size&&o.sizes.length&&!o.sizes.some(z=>norm(z)===norm(ln.size))) ln.size=""; }
-      $("#ln-"+k+"-"+i).value=ln[k]; if(k==="mau") $("#ln-size-"+i).value=ln.size; refreshChips(i); return; }
+      ln[k]=norm(ln[k])===norm(c.dataset.v)?"":c.dataset.v; if(k==="mau") $("#ln-mau-"+i).value=ln.mau; refreshChips(i); return; }
     const b=e.target.closest("[data-rm]"); if(!b)return; lines.splice(+b.dataset.rm,1); renderLines(); });
-  $("#addLine").addEventListener("click",()=>{ const last=lines[lines.length-1], n=newLine(); if(last){ n.mau=last.mau; n.size=last.size; n.la=last.la; } lines.push(n); renderLines(); const el=document.getElementById("ln-ct-"+(lines.length-1)); if(el) el.focus(); });
+  $("#form").addEventListener("click",()=>{ $("#formErr").hidden=true; });
+  $("#addLine").addEventListener("click",()=>{ const last=lines[lines.length-1], n=newLine(); if(last){ n.mau=last.mau; } lines.push(n); renderLines(); const el=document.getElementById("ln-ct-"+(lines.length-1)); if(el) el.focus(); });
 
   function renderLyDo(cur){
     const list=(lyDoList.length?lyDoList:["Lỗi vải (lủng, sợi, dơ)","Khác màu / loang màu","Cắt sai / lệch canh","Chuyền may làm hư","Thiếu chi tiết"]).slice();
-    const other=cur&&!list.some(x=>x===cur);
-    $("#i-ly").innerHTML=list.map(x=>'<option'+(x===cur?" selected":"")+'>'+esc(x)+'</option>').join("")+'<option value="__khac"'+(other?" selected":"")+'>Lý do khác (gõ tay)…</option>';
+    const other=!!cur&&!list.includes(cur);
+    $("#i-ly").innerHTML=list.map(x=>'<option'+(x===cur?" selected":"")+'>'+esc(x)+'</option>').join("")+'<option value="__khac"'+(other?" selected":"")+'>'+esc(t("otherReason"))+'</option>';
     $("#i-lyKhac").hidden=!other; $("#i-lyKhac").value=other?cur:"";
-    if(ctList.length) $("#dl-ct").innerHTML=ctList.map(x=>'<option value="'+esc(x)+'">').join("");
+    const cts=ctList.length?ctList:["Thân trước","Thân sau","Tay áo","Cổ","Chân cổ","Nẹp","Túi","Đáp túi","Lưng quần","Đáp","Bo tay"];
+    $("#dl-ct").innerHTML=cts.map(x=>'<option value="'+esc(x)+'">').join("");
   }
   $("#i-ly").addEventListener("change",()=>{ const k=$("#i-ly").value==="__khac"; $("#i-lyKhac").hidden=!k; if(k) $("#i-lyKhac").focus(); });
   const lyDoVal=()=>$("#i-ly").value==="__khac"?$("#i-lyKhac").value.trim():$("#i-ly").value;
+  function setFormTitle(){ const l=editingId&&findL(editingId);
+    $("#formTitle").textContent=l?t("formEdit",l.code||""):t("formNew"); $("#saveBtn").textContent=l?t("saveChanges"):t("send"); }
 
   function openForm(l){
-    editingId=l?l.id:null;
-    $("#formTitle").textContent=l?"Sửa yêu cầu "+(l.code||""):"Yêu cầu thay thân";
-    $("#saveBtn").textContent=l?"Lưu thay đổi":"Gửi yêu cầu";
+    editingId=l?l.id:null; setFormTitle();
     $("#formErr").hidden=true;
-    $("#i-ma").value=l?l.ma:""; $("#i-lsx").value=l?(l.lsx||""):""; $("#i-ban").value=l?(l.ban||""):""; $("#i-note").value=l?(l.note||""):"";
+    $("#i-ma").value=l?l.ma:""; $("#i-lsx").value=l?(l.lsx||""):""; $("#i-note").value=l?(l.note||""):"";
     renderLyDo(l?l.ly:"");
-    lines=l?itemsOf(l).map(i=>({id:i.id,ct:i.ct,mau:i.mau||"",size:i.size||"",la:i.la||"",sl:String(i.sl)})):[newLine()];
-    if(l){ dueSel="custom"; $("#i-han").value=toLocalInput(l.han); } else { dueSel="120"; $("#i-han").value=toLocalInput(computeDue()); }
-    updateDueHint(); hideSugg("ma"); hideSugg("lsx"); updateCatHint(); renderLines();
+    lines=l?itemsOf(l).map(i=>({id:i.id,ct:i.ct,mau:i.mau||"",size:i.size||"",sl:i.sl||1})):[newLine()];
+    renderDue(); hideSugg("ma"); hideSugg("lsx"); updateCatHint(); renderLines();
     $("#scrim").hidden=false; setTimeout(()=>$("#i-ma").focus(),50);
   }
   function closeForm(){ $("#scrim").hidden=true; editingId=null; }
@@ -713,27 +850,29 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   $("#scrim").addEventListener("click",e=>{ if(e.target.id==="scrim") closeForm(); });
   $("#form").addEventListener("submit",async e=>{
     e.preventDefault(); unlockAudio();
-    const ma=$("#i-ma").value.trim().toUpperCase(), han=computeDue();
+    const ma=$("#i-ma").value.trim().toUpperCase();
     const good=lines.filter(x=>x.ct.trim()&&parseInt(x.sl,10)>0);
-    const miss=[]; if(!ma)miss.push("mã hàng"); if(!good.length)miss.push("ít nhất 1 chi tiết có số lượng"); if(isNaN(han))miss.push("hạn hoàn thành");
-    if(lines.some(x=>(x.ct.trim()||x.sl)&&!(x.ct.trim()&&parseInt(x.sl,10)>0))) miss.push("dòng chi tiết đang nhập dở");
-    if(miss.length){ $("#formErr").textContent="Còn thiếu: "+miss.join(", ")+"."; $("#formErr").hidden=false; return; }
-    if(!lyDoVal()){ $("#formErr").textContent="Nhập lý do thay thân."; $("#formErr").hidden=false; return; }
-    const payload={ma,lsx:$("#i-lsx").value.trim(),ban:$("#i-ban").value.trim(),ly:lyDoVal(),note:$("#i-note").value.trim(),han,
-      items:good.map(x=>({id:x.id,ct:x.ct.trim(),mau:x.mau.trim(),size:x.size.trim(),la:x.la.trim(),sl:parseInt(x.sl,10)}))};
-    $("#saveBtn").disabled=true; $("#saveBtn").textContent="Đang gửi…";
+    const miss=[]; if(!ma)miss.push(t("m_style")); if(!lyDoVal())miss.push(t("m_reason")); if(!good.length)miss.push(t("m_part"));
+    if(lines.some(x=>!x.ct.trim()&&(x.mau||x.size))) miss.push(t("m_half"));
+    if(good.some(x=>!x.size&&lineOpts(x).sizes.length)) miss.push(t("m_size"));
+    if(miss.length){ $("#formErr").textContent=t("missing",miss.join(", ")); $("#formErr").hidden=false; return; }
+    const payload={ma,lsx:$("#i-lsx").value.trim(),ly:lyDoVal(),note:$("#i-note").value.trim(),
+      items:good.map(x=>({id:x.id,ct:x.ct.trim(),mau:x.mau.trim(),size:x.size.trim(),la:"",sl:parseInt(x.sl,10)}))};
+    const btn=$("#saveBtn"); btn.disabled=true; btn.textContent=t("sending");
     try{
-      if(editingId){ await act("apiEdit",editingId,payload); toast("Đã lưu thay đổi"); }
-      else { await act("apiCreate",payload); toast("Đã gửi yêu cầu – chờ duyệt"); }
+      if(editingId){ await act("apiEdit",editingId,payload); toast(t("saved")); }
+      else { const r=await act("apiCreate",payload); const mine=(r&&r.lenh||[]).filter(x=>x.ycBy===me.id).sort((a,b)=>b.ycAt-a.ycAt)[0];
+        toast(t("sent",mine?mine.code:"",mine?fmtDT(mine.han):"")); }
       closeForm();
-    }catch(err){ const m=msgOf(err); if(m==="AUTH"){ fail(err); closeForm(); } else { $("#formErr").textContent=m||"Không gửi được. Kiểm tra mạng rồi thử lại."; $("#formErr").hidden=false; } }
-    finally{ $("#saveBtn").disabled=false; $("#saveBtn").textContent=editingId?"Lưu thay đổi":"Gửi yêu cầu"; }
+    }catch(err){ const m=msgOf(err); if(m==="AUTH"){ fail(err); closeForm(); } else { $("#formErr").textContent=m||t("netErr"); $("#formErr").hidden=false; } }
+    finally{ btn.disabled=false; setFormTitle(); }
   });
 
-  // ---------- danh mục & chọn nhanh ----------
+  // ================= DANH MỤC & CHỌN NHANH =================
   let cat=[], combosCache=null, linesSig="";
   const norm=s=>String(s??"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[đĐ]/g,"d").toLowerCase().replace(/\s+/g," ").trim();
-  async function loadCatalog(){ try{ const r=await api("apiCatalog",token); const rows=Array.isArray(r)?r:(r.rows||[]); lyDoList=r.lyDo||[]; ctList=r.chiTiet||[]; cat=rows.map(a=>({ma:a[0]||"",lsx:a[1]||"",mau:a[2]||"",size:a[3]||""})); combosCache=null; updateCatHint(); }catch(e){} }
+  async function loadCatalog(){ try{ const r=await api("apiCatalog",token); const rows=Array.isArray(r)?r:(r.rows||[]); lyDoList=r.lyDo||[]; ctList=r.chiTiet||[];
+    cat=rows.map(a=>({ma:a[0]||"",lsx:a[1]||"",mau:a[2]||"",size:a[3]||""})); combosCache=null; updateCatHint(); }catch(e){} }
   function getCombos(){ if(combosCache)return combosCache; const seen=new Set(),out=[];
     const push=o=>{ if(!o.ma&&!o.lsx)return; const k=[o.ma,o.lsx,o.mau,o.size].map(norm).join("|"); if(seen.has(k))return; seen.add(k); out.push(o); };
     cat.forEach(push); lenh.forEach(l=>itemsOf(l).forEach(i=>push({ma:l.ma||"",lsx:l.lsx||"",mau:i.mau||"",size:i.size||""})));
@@ -741,7 +880,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   function uniqVals(arr){ const m=new Map(); arr.forEach(v=>{ if(v==null||v==="")return; const k=norm(v); if(!m.has(k))m.set(k,v); }); return [...m.values()]; }
   const SIZE_ORDER=["XXS","XS","S","M","L","XL","XXL","2XL","XXXL","3XL","4XL","5XL"];
   function sortSizes(a){ return a.sort((x,y)=>{ const X=String(x).toUpperCase(),Y=String(y).toUpperCase(),ix=SIZE_ORDER.indexOf(X),iy=SIZE_ORDER.indexOf(Y);
-    if(ix>=0&&iy>=0)return ix-iy; if(ix>=0)return -1; if(iy>=0)return 1; return String(x).localeCompare(String(y),"vi",{numeric:true}); }); }
+    if(ix>=0&&iy>=0)return ix-iy; if(ix>=0)return 1; if(iy>=0)return -1; return String(x).localeCompare(String(y),"vi",{numeric:true}); }); }
   function hl(text,qq){ text=String(text); const n=norm(text), i=qq?n.indexOf(qq):-1; if(i<0||n.length!==text.length)return esc(text);
     return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+qq.length))+"</mark>"+esc(text.slice(i+qq.length)); }
   const rankBy=qq=>(a,b)=>{ const sa=norm(a.v).startsWith(qq)?0:1, sb=norm(b.v).startsWith(qq)?0:1; return sa-sb||String(a.v).localeCompare(String(b.v),"vi",{numeric:true}); };
@@ -761,7 +900,7 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
   function autoFillLines(){ const pool=poolFor(), colors=uniqVals(pool.map(c=>c.mau));
     lines.forEach(ln=>{ if(ln.mau&&colors.length&&!colors.some(c=>norm(c)===norm(ln.mau))){ ln.mau=""; ln.size=""; }
       if(!ln.mau&&colors.length===1) ln.mau=colors[0];
-      const sz=uniqVals(pool.filter(c=>!ln.mau||norm(c.mau)===norm(ln.mau)).map(c=>c.size)); if(!ln.size&&sz.length===1) ln.size=sz[0]; }); }
+      const sz=uniqVals(pool.filter(c=>!ln.mau||norm(c.mau)===norm(ln.mau)).map(c=>c.size)); if(ln.size&&!sz.some(z=>norm(z)===norm(ln.size))) ln.size=""; if(!ln.size&&sz.length===1) ln.size=sz[0]; }); }
   function softRenderLines(){ setTimeout(()=>{ const sg=knownMa()+"|"+knownLsx(); if(sg===linesSig)return;
     const a=document.activeElement, id=a&&$("#lines").contains(a)?a.id:null; autoFillLines(); renderLines();
     if(id){ const el=document.getElementById(id); if(el) el.focus(); } },0); }
@@ -780,108 +919,106 @@ window.API_URL="https://script.google.com/macros/s/AKfycbw9j7ZP5Fb3-kdX1DRC17vF8
     inp.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!box.hidden){ const f=box.querySelector("button"); if(f){ e.preventDefault(); picked(w,f.dataset.v); } } if(e.key==="Escape"&&!box.hidden){ e.stopPropagation(); hideSugg(w); } });
     box.addEventListener("mousedown",e=>e.preventDefault());
     box.addEventListener("click",e=>{ const b=e.target.closest("button[data-v]"); if(b) picked(w,b.dataset.v); }); });
-  function updateCatHint(){ const n=uniqVals(cat.map(c=>c.lsx)).length;
-    $("#catHint").textContent=cat.length?"Gõ mã hàng hoặc LSX để chọn từ danh mục ("+n+" LSX). Màu và cỡ ở từng dòng chi tiết sẽ hiện theo LSX đã chọn."
-      :"Chưa có danh mục LSX, hãy gõ tay. Quản trị có thể dán danh mục vào sheet DanhMuc."; }
+  function updateCatHint(){ const n=uniqVals(cat.map(c=>c.lsx)).length; $("#catHint").textContent=cat.length?t("catHintOn",n):t("catHintOff"); }
 
-  // ---------- tài khoản ----------
-  function openAcct(u){ editAcctId=u?u.id:null; $("#acctTitle").textContent=u?"Sửa tài khoản":"Thêm tài khoản";
-    $("#a-ten").value=u?u.ten:""; ["yc","duyet","xl","admin"].forEach(r=>$("#r-"+r).checked=u?(u.roles||[]).includes(r):r==="yc");
-    $("#a-pin").value=""; $("#a-pinLbl").innerHTML=u?"Đặt lại mã PIN (để trống nếu giữ nguyên)":'Mã PIN 4–6 số <span class="req">*</span>';
+  // ================= TÀI KHOẢN =================
+  function openAcct(u){ editAcctId=u?u.id:null; $("#acctTitle").textContent=u?t("editAccT"):t("addAccT");
+    $("#a-ten").value=u?u.ten:""; ["yc","xl","admin"].forEach(r=>$("#r-"+r).checked=u?(u.roles||[]).includes(r):r==="yc");
+    $("#a-pin").value=""; $("#a-pinLbl").innerHTML=u?esc(t("pinReset")):esc(t("pinNew"))+' <span class="req">*</span>';
     $("#a-offWrap").hidden=!u; $("#a-off").checked=u?u.active===false:false; $("#acctErr").hidden=true; $("#acct").hidden=false; }
   $("#acctClose").addEventListener("click",()=>$("#acct").hidden=true);
   $("#acct").addEventListener("click",e=>{ if(e.target.id==="acct") $("#acct").hidden=true; });
   $("#acctForm").addEventListener("submit",async e=>{ e.preventDefault();
-    const d={id:editAcctId,ten:$("#a-ten").value.trim(),roles:["yc","duyet","xl","admin"].filter(r=>$("#r-"+r).checked),pin:$("#a-pin").value.trim(),off:$("#a-off").checked};
+    const d={id:editAcctId,ten:$("#a-ten").value.trim(),roles:["yc","xl","admin"].filter(r=>$("#r-"+r).checked),pin:$("#a-pin").value.trim(),off:$("#a-off").checked};
     const btn=e.target.querySelector("button[type=submit]"); btn.disabled=true;
-    try{ await act("apiSaveUser",d); $("#acct").hidden=true; toast("Đã lưu tài khoản "+d.ten); }
+    try{ await act("apiSaveUser",d); $("#acct").hidden=true; toast(t("accSaved",d.ten)); }
     catch(err){ const m=msgOf(err); if(m==="AUTH") fail(err); else { $("#acctErr").textContent=m; $("#acctErr").hidden=false; } }
     finally{ btn.disabled=false; } });
 
-  // ---------- đăng nhập ----------
-  let loginSel=null;
+  // ================= ĐĂNG NHẬP =================
+  let loginSel=null, loginMsg=null;
   function renderLogin(msg){
+    if(msg!==undefined) loginMsg=msg;
     const box=$("#loginBody");
-    if(msg!==undefined){ box.innerHTML='<h2>Sổ thay thân</h2><p>'+esc(msg)+'</p>'; return; }
+    if(loginMsg){ box.innerHTML='<h2>'+t("appName")+'</h2><p>'+esc(loginMsg)+'</p>'; return; }
     if(needSetup){
-      box.innerHTML='<h2>Thiết lập sổ thay thân</h2><p>Tạo tài khoản quản trị đầu tiên. Sau đó thêm tài khoản cho người yêu cầu, người duyệt và thợ cắt ở mục Quản trị.</p>'+
-        '<form id="setupForm" class="grid" novalidate style="grid-template-columns:1fr"><div class="fld"><label for="su-ten">Tên của bạn</label><input id="su-ten" autocomplete="off"></div>'+
-        '<div class="fld"><label for="su-pin">Mã PIN 4–6 số</label><input id="su-pin" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"></div>'+
-        '<div class="fld"><label for="su-pin2">Nhập lại PIN</label><input id="su-pin2" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"></div>'+
-        '<div class="err" id="suErr" hidden></div><div><button type="submit" class="btn primary">Tạo tài khoản quản trị</button></div></form>';
+      box.innerHTML='<h2>'+t("setupT")+'</h2><p>'+t("setupP")+'</p>'+
+        '<form id="setupForm" class="grid" novalidate style="grid-template-columns:1fr"><div class="fld"><label for="su-ten">'+t("yourName")+'</label><input id="su-ten" autocomplete="off"></div>'+
+        '<div class="fld"><label for="su-pin">'+t("pinNew")+'</label><input id="su-pin" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"></div>'+
+        '<div class="fld"><label for="su-pin2">'+t("pin2")+'</label><input id="su-pin2" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"></div>'+
+        '<div class="err" id="suErr" hidden></div><div><button type="submit" class="btn primary">'+t("createAdmin")+'</button></div></form>';
       return; }
-    const act_=people.slice().sort((a,b)=>a.ten.localeCompare(b.ten,"vi"));
-    const sel=people.find(u=>u.id===loginSel);
-    box.innerHTML='<h2>Ai đang dùng máy này?</h2><p>Chọn tên của bạn và nhập mã PIN.</p>'+
-      '<div class="people">'+act_.map(u=>'<button type="button" data-u="'+u.id+'" aria-pressed="'+(u.id===loginSel)+'"><span class="nm">'+esc(u.ten)+'</span><span class="rl">'+(u.roles||[]).map(r=>ROLE_LBL[r]).join(" · ")+'</span></button>').join("")+'</div>'+
-      '<form id="pinForm" class="grid" novalidate style="grid-template-columns:1fr"'+(sel?'':' hidden')+'><div class="fld"><label for="lg-pin">Mã PIN của '+esc(sel?sel.ten:"")+'</label><input id="lg-pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password"></div>'+
-      '<div class="err" id="lgErr" hidden></div><div><button type="submit" class="btn primary">Đăng nhập</button></div></form>';
+    const list=people.slice().sort((a,b)=>a.ten.localeCompare(b.ten,"vi")), sel=people.find(u=>u.id===loginSel);
+    box.innerHTML='<h2>'+t("whoT")+'</h2><p>'+t("whoP")+'</p>'+
+      '<div class="people">'+list.map(u=>'<button type="button" data-u="'+u.id+'" aria-pressed="'+(u.id===loginSel)+'"><span class="nm">'+esc(u.ten)+'</span><span class="rl">'+(u.roles||[]).filter(r=>t("role_"+r)).map(r=>t("role_"+r)).join(" · ")+'</span></button>').join("")+'</div>'+
+      '<form id="pinForm" class="grid" novalidate style="grid-template-columns:1fr"'+(sel?'':' hidden')+'><div class="fld"><label for="lg-pin">'+t("pinOf",esc(sel?sel.ten:""))+'</label><input id="lg-pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password"></div>'+
+      '<div class="err" id="lgErr" hidden></div><div><button type="submit" class="btn primary">'+t("login")+'</button></div></form>';
   }
   $("#loginBody").addEventListener("click",e=>{ const b=e.target.closest("[data-u]"); if(!b)return; loginSel=b.dataset.u; renderLogin(); setTimeout(()=>{const p=$("#lg-pin"); if(p)p.focus();},30); });
   $("#loginBody").addEventListener("submit",async e=>{ e.preventDefault(); unlockAudio();
     const btn=e.target.querySelector("button[type=submit]"); btn.disabled=true;
     try{
       if(e.target.id==="setupForm"){ const ten=$("#su-ten").value.trim(), p1=$("#su-pin").value.trim(), p2=$("#su-pin2").value.trim();
-        if(p1!==p2) throw new Error("Hai lần nhập PIN không khớp.");
+        if(p1!==p2) throw new Error(t("pinMismatch"));
         token=await api("apiSetup",ten,p1); lsSet("tt_tok",token); needSetup=false; await start(); return; }
       if(e.target.id==="pinForm"){ token=await api("apiLogin",loginSel,$("#lg-pin").value.trim()); lsSet("tt_tok",token);
-        const d=await api("apiData",token); applyData(d); toast("Xin chào "+me.ten); }
+        applyData(await api("apiData",token)); toast(t("hello",me.ten)); }
     }catch(err){ const el=$("#suErr")||$("#lgErr"); if(el){ el.textContent=msgOf(err); el.hidden=false; } const p=$("#lg-pin"); if(p) p.value=""; btn.disabled=false; } });
-  function localLogout(){ token=null; lsSet("tt_tok",null); me=null; loginSel=null; closeDetail(); closeForm(); render(); $("#login").hidden=false; renderLogin(); api("apiInit",null).then(r=>{ if(!me){ people=r.people||[]; needSetup=!!r.needSetup; renderLogin(); } }).catch(()=>{}); }
-  $("#meBtn").addEventListener("click",()=>{ const t=token; api("apiLogout",t).catch(()=>{}); localLogout(); });
+  function localLogout(){ token=null; lsSet("tt_tok",null); me=null; loginSel=null; loginMsg=null; closeDetail(); closeForm(); $("#bell").hidden=true; render(); $("#login").hidden=false; renderLogin();
+    api("apiInit",null).then(r=>{ if(!me){ people=r.people||[]; needSetup=!!r.needSetup; renderLogin(); } }).catch(()=>{}); }
+  $("#meBtn").addEventListener("click",()=>{ const tk=token; api("apiLogout",tk).catch(()=>{}); localLogout(); });
 
-  // ---------- thông báo ----------
+  // ================= THÔNG BÁO =================
   const seenAt=()=>{ const v=Number(lsGet("tt_seen_"+(me&&me.id))); return v||Date.now()-12*3600e3; };
   function forMe(n){ if(!me||n.by===me.id) return false; const l=lenh.find(x=>x.id===n.id), mine=!!l&&l.ycBy===me.id;
     switch(n.a){
-      case "tao": return has("duyet")||has("xl");
-      case "sua": return has("duyet");
-      case "duyet": return mine||has("xl");
-      case "tuchoi": return mine;
-      case "doihan": return mine||has("xl");
-      case "catxong": return mine||has("duyet");
-      case "bangiao": return mine||has("duyet")||has("xl");
-      case "huy": return mine||has("duyet")||has("xl");
+      case "tao": case "sua": return has("xl");
+      case "duyet": case "tuchoi": return mine;
+      case "doihan": case "huy": return mine||has("xl");
+      case "catxong": return mine;
+      case "bangiao": return mine||has("xl");
       default: return false; } }
   const myNotif=()=>notif.filter(forMe).sort((a,b)=>b.t-a.t);
   function notifText(n){ const l=lenh.find(x=>x.id===n.id);
-    return '<b>'+esc(n.name)+'</b> '+esc(ACT_LBL[n.a]||n.a)+' <b>'+esc(n.code)+'</b>'+(l?' · '+esc(l.ma):'')+(n.n&&n.a!=="tao"?' ('+esc(n.n)+')':''); }
+    return '<b>'+esc(n.name)+'</b> '+esc(t("a_"+n.a))+' <b>'+esc(n.code)+'</b>'+(l?' · '+esc(l.ma):'')+(n.n&&!["tao","duyet","bangiao"].includes(n.a)?' ('+esc(n.n)+')':''); }
   const nkey=n=>n.t+"|"+n.id+"|"+n.a;
   const shown=new Set(); let notifSeeded=false;
   const seen={}; let seeded=false;
   function checkAlerts(){ if(!me)return; const now=Date.now(), mine=myNotif();
     if(!notifSeeded){ mine.forEach(n=>shown.add(nkey(n))); notifSeeded=true; }
     else { const fresh=mine.filter(n=>!shown.has(nkey(n))); fresh.forEach(n=>shown.add(nkey(n)));
-      if(fresh.length){ const d=document.createElement("div"); d.innerHTML=notifText(fresh[0]);
-        toast(d.textContent+(fresh.length>1?" (+"+(fresh.length-1)+" thông báo khác)":"")); beep(1); } }
-    // cảnh báo sắp trễ / quá hạn cho tổ cắt và người duyệt
-    if(!(has("xl")||has("duyet"))) return;
+      if(fresh.length){ const d=document.createElement("div"); d.innerHTML=notifText(fresh[0]); toast(d.textContent+(fresh.length>1?t("moreN",fresh.length-1):"")); beep(1); } }
+    if(!has("xl")) return;
     const msgs=[]; let lvl=0;
     lenh.filter(l=>CUT.includes(l.status)).forEach(l=>{ const st=stateOf(l,now), old=seen[l.id]; seen[l.id]=st; if(!seeded||old===st) return;
-      if(st==="late"){ msgs.push("Quá hạn: "+l.code+" "+l.ma); lvl=2; } else if(st==="warn"&&old==="ok"){ msgs.push("Còn ≤ "+WARN_MIN+" phút: "+l.code+" "+l.ma); lvl=Math.max(lvl,1); } });
+      if(st==="late"){ msgs.push(t("lateAlert",l.code+" "+l.ma)); lvl=2; } else if(st==="warn"&&old==="ok"){ msgs.push(t("warnAlert",WARN_MIN,l.code+" "+l.ma)); lvl=Math.max(lvl,1); } });
     seeded=true;
     if(msgs.length){ toast(msgs.slice(0,3).join(" · "),lvl===2); beep(lvl===2?3:1); } }
-  function openBell(){ const list=myNotif(), since=seenAt();
-    $("#bellBody").innerHTML='<div class="hd"><h2>Thông báo</h2><button type="button" class="btn ghost" data-act="closeBell">Đóng</button></div>'+
+  function openBell(){ const list=myNotif(), since=Number($("#bell").dataset.since)||seenAt();
+    $("#bell").dataset.since=since;
+    $("#bellBody").innerHTML='<div class="hd"><h2>'+t("notifT")+'</h2><button type="button" class="btn ghost" data-act="closeBell">'+t("close")+'</button></div>'+
       (list.length?'<div class="nlist">'+list.map(n=>'<button type="button" class="nitem'+(n.t>since?" new":"")+'" data-nid="'+esc(n.id)+'"><span class="nt">'+notifText(n)+'</span><time>'+fmtDT(n.t)+'</time></button>').join("")+'</div>'
-        :'<div class="empty">Chưa có thông báo nào trong 3 ngày qua.</div>');
+        :'<div class="empty">'+t("notifEmpty")+'</div>');
     $("#bell").hidden=false; lsSet("tt_seen_"+me.id,String(Date.now())); render(); }
-  $("#bellBtn").addEventListener("click",()=>{ unlockAudio(); openBell(); });
-  $("#bell").addEventListener("click",e=>{ if(e.target.id==="bell"||e.target.closest('[data-act="closeBell"]')){ $("#bell").hidden=true; return; }
-    const b=e.target.closest("[data-nid]"); if(b){ $("#bell").hidden=true; if(findL(b.dataset.nid)) openDetail(b.dataset.nid); else toast("Phiếu này đã cũ, xem ở tab Lịch sử."); } });
+  function closeBell(){ $("#bell").hidden=true; delete $("#bell").dataset.since; }
+  $("#bellBtn").addEventListener("click",()=>{ unlockAudio(); delete $("#bell").dataset.since; openBell(); });
+  $("#bell").addEventListener("click",e=>{ if(e.target.id==="bell"||e.target.closest('[data-act="closeBell"]')){ closeBell(); return; }
+    const b=e.target.closest("[data-nid]"); if(b){ closeBell(); if(findL(b.dataset.nid)) openDetail(b.dataset.nid); else toast(t("notifOld")); } });
 
   document.addEventListener("keydown",e=>{ if(e.key!=="Escape")return;
-    for(const id of ["bell","acct","scrim","detail"]){ if(!$("#"+id).hidden){ if(id==="detail")closeDetail(); else if(id==="scrim")closeForm(); else $("#"+id).hidden=true; return; } } });
+    for(const id of ["bell","acct","scrim","detail"]){ if(!$("#"+id).hidden){ if(id==="detail")closeDetail(); else if(id==="scrim")closeForm(); else if(id==="bell")closeBell(); else $("#"+id).hidden=true; return; } } });
+  setInterval(()=>{ if(!$("#scrim").hidden&&!editingId) renderDue(); },60000);
 
-  // ---------- khởi động ----------
+  // ================= KHỞI ĐỘNG =================
   async function start(){
-    renderLogin("Đang kết nối…"); $("#login").hidden=false;
+    renderLogin(t("connecting")); $("#login").hidden=false;
     try{
       const r=await api("apiInit",token);
-      needSetup=!!r.needSetup; people=r.people||[];
+      needSetup=!!r.needSetup; people=r.people||[]; loginMsg=null;
       if(r.me){ applyData(r); } else { token=null; lsSet("tt_tok",null); renderLogin(); }
-    }catch(e){ renderLogin("Không kết nối được máy chủ: "+msgOf(e)+". Tải lại trang để thử lại."); }
+    }catch(e){ renderLogin(t("cantConnect",msgOf(e))); }
   }
+  applyLang();
   token=lsGet("tt_tok");
   render(); start();
 })();
